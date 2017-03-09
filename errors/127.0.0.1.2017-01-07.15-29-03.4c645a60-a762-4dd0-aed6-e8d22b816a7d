@@ -1,0 +1,21 @@
+(dp1
+S'output'
+p2
+S"<type 'exceptions.KeyError'> "
+p3
+sS'layer'
+p4
+S'/opt/python/web2py-files/web2py/applications/atencion/controllers/evaluador.py'
+p5
+sS'code'
+p6
+S'# -*- coding: utf-8 -*-\n# this file is released under public domain and you can use without limitations\n\n@auth.requires_membership("evaluador")\ndef users_evaluador():\n    selectable = lambda ids: db(db.auth_user.id.belongs(ids)).delete()\n\n    fields = [db.auth_user.first_name, db.auth_user.email, db.auth_user.centro]\n\n    grid = SQLFORM.smartgrid(db.auth_user, selectable=selectable, linked_tables=[db.auth_membership], exportclasses=dict(xml=False, html=False, json=False, csv_with_hidden_cols=False, tsv_with_hidden_cols=False))\n\n    response.flash = T("Administrar usuarios")\n    response.title = T("Administrar usuarios") + response.title\n\n    heading=grid.elements(\'th\')\n    if heading:\n           heading[0].append(INPUT(_type=\'checkbox\', _onclick="jQuery(\'input[type=checkbox]\').each(function(k){jQuery(this).attr(\'checked\', \'checked\');});"))\n    return dict(grid=grid)\n\n@auth.requires_membership("evaluador")\ndef centros_evaluador():\n    selectable = lambda ids: db(db.centro.id.belongs(ids)).delete()\n\n    fields = [db.centro.nombre, db.centro.nivel_educativo, db.centro.direccion]\n\n    grid = SQLFORM.smartgrid(db.centro, selectable=selectable, linked_tables=[], exportclasses=dict(xml=False, html=False, json=False, csv_with_hidden_cols=False, tsv_with_hidden_cols=False))\n\n    response.flash = T("Administrar centros")\n    response.title = T("Administrar Centros") + response.title\n\n    heading=grid.elements(\'th\')\n    if heading:\n           heading[0].append(INPUT(_type=\'checkbox\', _onclick="jQuery(\'input[type=checkbox]\').each(function(k){jQuery(this).attr(\'checked\', \'checked\');});"))\n    return dict(grid=grid)\n\n@auth.requires_membership("evaluador")\ndef nivel_atencional_evaluador():\n    selectable = lambda ids: db(db.nivel_atencional.id.belongs(ids)).delete()\n\n    fields = [db.nivel_atencional.nombre, db.nivel_atencional.descripcion]\n\n    grid = SQLFORM.smartgrid(db.nivel_atencional, selectable=selectable, linked_tables=[], exportclasses=dict(xml=False, html=False, json=False, csv_with_hidden_cols=False, tsv_with_hidden_cols=False))\n\n    response.flash = T("Administrar nivel atencional")\n    response.title = T("Administrar nivel atencional") + response.title\n\n    heading=grid.elements(\'th\')\n    if heading:\n           heading[0].append(INPUT(_type=\'checkbox\', _onclick="jQuery(\'input[type=checkbox]\').each(function(k){jQuery(this).attr(\'checked\', \'checked\');});"))\n    return dict(grid=grid)\nresponse._vars=response._caller(nivel_atencional_evaluador)\n'
+p7
+sS'snapshot'
+p8
+(dp9
+sS'traceback'
+p10
+S'Traceback (most recent call last):\n  File "/opt/python/web2py-files/web2py/gluon/restricted.py", line 227, in restricted\n    exec ccode in environment\n  File "/opt/python/web2py-files/web2py/applications/atencion/controllers/evaluador.py", line 51, in <module>\n  File "/opt/python/web2py-files/web2py/gluon/globals.py", line 417, in <lambda>\n    self._caller = lambda f: f()\n  File "/opt/python/web2py-files/web2py/gluon/tools.py", line 4241, in f\n    return action(*a, **b)\n  File "/opt/python/web2py-files/web2py/applications/atencion/controllers/evaluador.py", line 42, in nivel_atencional_evaluador\n    grid = SQLFORM.smartgrid(db.nivel_atencional, selectable=selectable, linked_tables=[], exportclasses=dict(xml=False, html=False, json=False, csv_with_hidden_cols=False, tsv_with_hidden_cols=False))\n  File "/opt/python/web2py-files/web2py/gluon/sqlhtml.py", line 3116, in smartgrid\n    grid.update_form.record))\n  File "/opt/python/web2py-files/web2py/gluon/sqlhtml.py", line 2982, in format\n    return table._format % row\n  File "/opt/python/web2py-files/web2py/gluon/packages/dal/pydal/objects.py", line 76, in __getitem__\n    raise KeyError\nKeyError\n'
+p11
+s.

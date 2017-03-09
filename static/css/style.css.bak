@@ -1,0 +1,137 @@
+/* YOUR CUSTOM STYLES */
+
+/*Configuracion font-family UPR*/
+@font-face {
+    font-family: 'MyriadPro-Light';
+    src: url('fonts/upr/MyriadPro-Light.otf');
+  }
+
+@font-face {
+    font-family: 'MyriadPro-Regular';
+    src: url('fonts/upr/MyriadPro-Regular.otf');
+  }
+
+@font-face {
+    font-family: 'MyriadPro-It';
+    src: url('fonts/upr/MyriadPro-It.otf');
+  }
+
+body {
+    font-family: 'MyriadPro-Light';
+    line-height: 30px;
+    height: auto;
+    min-height: 100%;
+    padding-top: 20px;
+}
+
+h1, h2, h3 {
+    line-height: 30px;
+}
+
+h1,h2,h3,h4,h5{
+    font-weight: 100;
+}
+
+h1{
+    font-family: 'MyriadPro-Light';
+    color: #333;
+    font-size: 28px;
+}
+
+h2{
+    font-family: 'MyriadPro-Light';
+    font-size: 22px;
+    color: #333;
+}
+
+h3{
+    font-family: 'MyriadPro-Regular';
+    font-size: 20px;
+}
+
+h4{
+    font-family: 'MyriadPro-Regular';
+    font-size: 18px;
+}
+
+h5{
+    font-family: 'MyriadPro-It';
+    font-size: 16px;
+}
+
+p, li, a, label{
+    font-family: 'MyriadPro-Light';
+    font-size: 20px;
+    color: #333;
+}
+
+#navbar-repository > ul.nav > li > a{
+    font-size: 20px!important;
+}
+
+a{
+    font-family: 'MyriadPro-Regular';
+    font-size: 16px;
+    cursor: hand;
+}
+
+html,
+body,
+.view {
+    height: 100%;
+}
+
+.view {
+    background: url("../img/homepage_background.jpg")no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.full-bg-img > div {
+    background-color: rgba(43, 187, 173, 0.40);
+    padding: 15%;
+}
+
+.footer-copyright, .resources-type {
+    background-color: rgba(68, 175, 119, 0.99);
+}
+
+.card .card-title {
+    color: #2BBBAD;
+}
+
+.navbar-default {
+    background-color: rgba(68, 175, 119, 0.99);
+    padding: 0px;
+}
+
+.top-nav-collapse {
+    background-color: rgba(68, 175, 119, 0.99);
+}
+
+.full-height {
+    height: 100%;
+}
+
+.main-container {
+    min-height: 900px;
+    height: auto;
+}
+
+.dropdown-menu>.active>a, .dropdown-menu>.active>a:hover, .dropdown-menu>.active>a:focus {
+    color: #fff;
+    text-decoration: none;
+    outline: 0;
+    background-color: #2BBBAD;
+}
+
+input[type=date], input[type=datetime-local], input[type=email], input[type=number], input[type=password], input[type=search-md], input[type=tel], input[type=text], input[type=time], input[type=url], textarea.materialize-textarea, .form-control {
+    font-size: 1.5rem;
+}
+
+select.form-control {
+    height: 42px;
+    margin-top: 10px;
+}

@@ -1,0 +1,265 @@
+{{extend 'layout_homepage.html'}}
+
+{{block header}}
+    <ul>
+        <li>
+            <h1 class="h1-responsive wow fadeInDown" data-wow-delay="0.2s">{{=T('Comunidad Virtual de Recursos Forestales')}}</h1></li>
+        <li>
+            <h2 class="wow fadeInDown">{{=T("Compartiendo la información forestal")}}</h2>
+        </li>
+        <li>
+            <a href="#services" class="btn btn-default btn-lg wow fadeInRight" data-wow-delay="0.2s">{{=T("¿Qué necesitas hacer?")}}</a>
+        </li>
+    </ul>
+{{end}}
+
+{{block services}}
+    <div class="row">
+        <div class="col-md-6 col-md-offset-1">
+            <h2 class="h2-responsive wow fadeInDown">{{=T("Servicios")}}</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3 col-md-offset-1">
+            <!--Card-->
+            <div class="card wow fadeInDown" data-wow-delay="0.2s">
+                <!--Card image-->
+                <div class="view overlay">
+                   <img width="40%" src="{{=URL('static', 'img/users.png')}}" class="img-fluid img-service" alt="">
+                    <a href="{{=URL('default', 'user', args=['register'], vars=dict(_next=URL()))}}">
+                        <div class="mask"></div>
+                    </a>
+                </div>
+                <!--/.Card image-->
+
+                <!--Card content-->
+                <div class="card-block text-xs-center">
+                    <!--Title-->
+                    <a href="{{=URL('default', 'user', args=['register'], vars=dict(_next=URL()))}}"><h4 class="card-title">{{=T("Únete")}}</h4></a>
+                    <hr>
+                    <!--Text-->
+                    <p class="card-text">{{=T("Miles de Recursos pueden ser buscados en nuestra Base de Datos")}}</p>
+                </div>
+                <!--/.Card content-->
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card wow fadeInDown" data-wow-delay="0.3s">
+                <!--Card image-->
+                <div class="view overlay">
+                   <img width="40%" src="{{=URL('static', 'img/users.png')}}" class="img-fluid img-service" alt="">
+                    <a href="{{=URL('resource', 'search')}}">
+                        <div class="mask"></div>
+                    </a>
+                </div>
+                <!--/.Card image-->
+
+                <!--Card content-->
+                <div class="card-block text-xs-center">
+                    <!--Title-->
+                    <a href="{{=URL('resource', 'search')}}"><h4 class="card-title">{{=T("Buscar")}}</h4></a>
+                    <hr>
+                    <!--Text-->
+                    <p class="card-text">{{=T("Miles de Recursos pueden ser buscados en nuestra Base de Datos")}}</p>
+                </div>
+                <!--/.Card content-->
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card wow fadeInDown" data-wow-delay="0.4s">
+                <!--Card image-->
+                <div class="view overlay">
+                   <img width="40%" src="{{=URL('static', 'img/users.png')}}" class="img-fluid img-service" alt="">
+                    <a href="{{=URL('resource', 'upload')}}">
+                        <div class="mask"></div>
+                    </a>
+                </div>
+                <!--/.Card image-->
+
+                <!--Card content-->
+                <div class="card-block text-xs-center">
+                    <!--Title-->
+                    <a href="{{=URL('resource', 'upload')}}"><h4 class="card-title">{{=T("Contribuir")}}</h4></a>
+                    <hr>
+                    <!--Text-->
+                    <p class="card-text">{{=T("Contribuir al enriquecimiento de nuestro acervo de información forestal")}}</p>
+                </div>
+                <!--/.Card content-->
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3 col-md-offset-1">
+            <div class="card wow fadeInDown" data-wow-delay="0.5s">
+                <!--Card image-->
+                <div class="view overlay">
+                   <img width="40%" src="{{=URL('static', 'img/users.png')}}" class="img-fluid img-service" alt="">
+                    <a href="{{=URL('oai', 'index')}}">
+                        <div class="mask"></div>
+                    </a>
+                </div>
+                <!--/.Card image-->
+
+                <!--Card content-->
+                <div class="card-block text-xs-center">
+                    <!--Title-->
+                    <a href="{{=URL('oai', 'index')}}"><h4 class="card-title">{{=T("Indexáme")}}</h4></a>
+                    <hr>
+                    <!--Text-->
+                    <p class="card-text">{{=T("Registrar su revista para ser indexada en nuestra Base de Datos")}}</p>
+                </div>
+                <!--/.Card content-->
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card wow fadeInDown" data-wow-delay="0.6s">
+                <!--Card image-->
+                <div class="view overlay">
+                   <img width="40%" src="{{=URL('static', 'img/users.png')}}" class="img-fluid img-service" alt="">
+                    <a href="{{=URL('blog', 'index')}}">
+                        <div class="mask"></div>
+                    </a>
+                </div>
+                <!--/.Card image-->
+
+                <!--Card content-->
+                <div class="card-block text-xs-center">
+                    <!--Title-->
+                    <a href="{{=URL('blog', 'index')}}"><h4 class="card-title">{{=T("Conoce la noticia")}}</h4></a>
+                    <hr>
+                    <!--Text-->
+                    <p class="card-text">{{=T("Connozca la primicia de eventos y actividades en el sector forestal")}}</p>
+                </div>
+                <!--/.Card content-->
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card wow fadeInDown" data-wow-delay="0.7s">
+                <!--Card image-->
+                <div class="view overlay">
+                   <img width="40%" src="{{=URL('static', 'img/users.png')}}" class="img-fluid img-service" alt="">
+                    <a href="{{=URL('forum', 'index')}}">
+                        <div class="mask"></div>
+                    </a>
+                </div>
+                <!--/.Card image-->
+
+                <!--Card content-->
+                <div class="card-block text-xs-center">
+                    <!--Title-->
+                    <a href="{{=URL('forum', 'index')}}"><h4 class="card-title">{{=T("Compartir criterios")}}</h4></a>
+                    <hr>
+                    <!--Text-->
+                    <p class="card-text">{{=T("Foro debate, para compartir criterios y opiniones sobre tématicas variadas")}}</p>
+                </div>
+                <!--/.Card content-->
+            </div>
+        </div>
+    </div>
+{{end}}
+
+{{block about}}
+    <div class="row">
+        <div class="col-md-6 col-md-offset-1">
+            <h2 class="h2-responsive wow fadeInDown">{{=T("Acerca de nosotros")}}</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3 col-md-offset-1">
+            <article class="wow fadeInDown" data-wow-delay="0.2s">
+                <h4 class="h4-responsive">{{=T("¿Quienes somos?")}}</h4>
+                <p>{{=T("Somos un equipo multidisciplinario de especialistas forestales en Cuba, entre sus miembros contamos con profesores de la enseñanza forestal de la Universidad de Pinar del Río (UPR), así como de las Facultades donde se estudia la carrera forestal de las Universidades de Granma y Guantánamo, del Instituto de Investigaciones Agroforestales (INAF) del Ministerio de la Agricultura (MINAG), el Instituto de Ecología y Sistemática (IES), el Cuerpo de Guardabosques (CGB), el Centro Nacional de Áreas Protegidas (CENAP), la Empresa Nacional para la Protección de la Flora y la Fauna (ENPPF), así como el Ministerio de Ciencia, Tecnología y Medio Ambiente (CITMA)")}}.</p>
+            </article>
+        </div>
+        <div class="col-md-3">
+            <article class="wow fadeInDown" data-wow-delay="0.2s">
+                <h4 class="h4-responsive">{{=T("¿Qué hacemos?")}}</h4>
+                <p>{{=T("Recopilamos toda la información de la rama forestal que generamos, poseemos o que gestionamos en el mundo y la ponemos a disposición de todos a través de la Comunidad Virtual de Recursos Forestales para contribuir a la difusión del acervo de conocimientos de todas las instituciones dedicadas a estudiar, manejar, proteger y aprovechar los recursos forestales en la región de Centro América y el Caribe. Por lo que la CVRF no se responsabiliza con la veracidad de los documentos subidos, lo cual corresponde a los consejos editoriales, comités doctorales y otras instituciones encargadas de la publicación oficial de estos documentos.")}}</p>
+            </article>
+        </div>
+        <div class="col-md-3">
+            <article class="wow fadeInDown" data-wow-delay="0.2s">
+                <h4 class="h4-responsive">{{=T("¿Qué es la Comunidad Virtual de Recursos Forestales?")}}</h4>
+                <p>{{=T('La Comunidad Virtual de Recursos Forestales es el conjunto de informaciones en todas sus diversas formas: textos, publicaciones periódicas o no, tesis (de pregrado, maestría o doctorado), leyes, regulaciones, manuales, folletos, informes, actas de eventos internacionales, multimedias o cualquier otro documento vinculado al sector forestal, que tiene como objetivo divulgar la información forestal entre todos los actores del sector con el empleo de un sistema de herramientas informáticas que favorezca la disponibilidad de esta información para mejorar el monitoreo del manejo del bosque, su protección, y el aprovechamiento forestal a lo largo del país y para toda Centro América y el Caribe. Esta soportado sobre el Proyecto FAO-FLEGT "Compartir información para el fortalecimiento del conocimiento sobre el sector forestal cubano entre todos los actores participantes".')}}</p>
+            </article>
+        </div>
+    </div>
+{{end}}
+
+{{block counter}}
+     <!--Counter-->
+    <nav class="navbar navbar-counter">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <ul>
+                        <li><h1 class="wow fadeInUp" data-wow-delay="0.2s">{{=T('Recursos')}}</h1></li>
+                        <li><h2 class="wow fadeInUp" data-wow-delay="0.3s">500</h2></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <ul>
+                        <li><h1 class="wow fadeInUp" data-wow-delay="0.2s">{{=T('Usuarios')}}</h1></li>
+                        <li><h2 class="wow fadeInUp" data-wow-delay="0.3s">500</h2></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <ul>
+                        <li><h1 class="wow fadeInUp" data-wow-delay="0.2s">{{=T('Usuarios online')}}</h1></li>
+                        <li><h2 class="wow fadeInUp" data-wow-delay="0.3s">50</h2></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!--/.Counter-->
+{{end}}
+
+{{block information}}
+
+    <div class="row">
+        <div class="col-md-4">
+            <article>
+                <h3 class="h3-responsive">{{=T("Contact us")}}</h3>
+                <ul class="text-xs-center">
+                    <li class="wow fadeInUp" data-wow-delay="0.2s">
+                        <h3>{{=T('Comunidad Virtual de Recursos Forestales')}}</h3>
+                    </li>
+                    <li class="wow fadeInUp" data-wow-delay="0.3s">
+                        <h4><ico class="glyphicon glyphicon-map-marker"></ico>{{=T('Edificio docente cuarta planta, Universidad Pinar del Río, "Hermanos Saíz Montes de Oca", Pinar del Río, Cuba')}}</h4>
+                    </li>
+
+                    <li class="wow fadeInUp" data-wow-delay="0.4s">
+                        <p><ico class="glyphicon glyphicon-phone"></ico> + 01 234 567 89</p>
+                    </li>
+
+                    <li class="wow fadeInUp" data-wow-delay="0.5s"><ico class="glyphicon glyphicon-envelope"></ico>
+                        <a href="mailto:cvforestal.upr.edu.cu">cvforestal@upr.edu.cu</a>
+                    </li>
+                </ul>
+            </article>
+        </div>
+        <div class="col-md-4">
+            <article class="wow fadeInDown" data-wow-delay="0.3s">
+                <h3 class="h3-responsive">{{=T("Privacidad")}}</h3>
+                <ul>
+                    <li>{{=A(T('Términos y condiciones'))}}</li>
+                    <li>{{=A(T('Grupo de desarrollo'))}}</li>
+                </ul>
+            </article>
+        </div>
+        <div class="col-md-2">
+            <article class="wow fadeInDown" data-wow-delay="0.4s">
+                <h3 class="h3-responsive">{{=T("Financiado")}}</h3>
+                <ul>
+                    <li><h2>{{=T('Universidad de Pinar del Río')}}</h2></li>
+                    <li><h2>{{=T('Fao')}}</h2></li>
+                    <li><h2>{{=T('Fleg')}}</h2></li>
+                </ul>
+            </article>
+        </div>
+    </div>
+{{end}}

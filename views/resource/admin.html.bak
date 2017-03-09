@@ -1,0 +1,61 @@
+{{extend 'layout.html'}}
+
+{{block header}}
+<br />
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-10">
+            <h1>{{=T("Administrate resource")}}</h1>
+            <hr />
+        </div>
+    </div>
+</div>
+{{end}}
+
+{{=grid}}
+
+{{block head}}
+{{super}}
+<link href="{{=URL('static', 'css/summernote/summernote.css')}}" rel="stylesheet" type="text/css" />
+<link href="{{=URL('static', 'css/font-awesome.min.css')}}" rel="stylesheet" type="text/css" />
+
+<script>
+  $(document).ready(function() {
+     $('#resource_coverpag__row > div > div > span').hide();
+  });
+</script>
+{{end}}
+
+{{language = 'en-EN'}}
+{{if (T.accepted_language == 'es' ):}}
+   {{language = 'es-ES'}}
+{{pass}}
+
+{{block page_js}}
+  {{super}}
+  <script src="{{=URL('static', 'js/summernote/summernote.min.js')}}"></script>
+    {{if language == 'es-ES':}}
+       <script src="{{=URL('static', 'js/summernote/locales/summernote-es-ES.js')}}"></script>
+    {{pass}}
+<script>
+ $(document).ready(function() {
+
+     /*Visibilidad*/
+     $('#resource_description, #comment_body').summernote({fontNames: ['Arial', 'MyriadPro-Light', 'MyriadPro-Regular'],
+            toolbar: [
+            //[groupname, [button list]]
+               ['style', ['style', 'bold','italic', 'underline', 'clear']],
+               ['font', ['strikethrough', 'superscript', 'subscript']],
+               ['fontsize', ['fontname']],
+               ['color', ['color']],
+               ['para', ['ul', 'ol', 'paragraph']],
+               ['height', ['height']],
+               ['insert', ['link', 'table', 'hr']],
+               ['misc', ['fullscreen', 'codeview', 'undo','redo', 'help']],
+            ],
+            lang: '{{=language}}',
+            height: 250,   //set editable area's height
+    });
+ });
+</script>
+{{end page_js}}

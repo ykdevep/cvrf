@@ -1,0 +1,12 @@
+<ul class="nav nav-pills">
+    <li class="btn"></li>
+    <li class="btn">{{=form}}</li>
+    {{=LI(CAT(XML(SPAN(_class="glyphicon glyphicon-star")), SPAN(votes, _class="badge")), _id="btn-voted")}}
+</ul>
+
+
+<script>
+  $(document).ready(function() {
+     $('ul > li > form > input[type=submit]').val('{{if vote_by_my:}}{{=T("Quit star")}}{{else:}}{{=T("Give star")}}{{pass}}');
+  });
+</script>

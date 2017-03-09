@@ -1,0 +1,104 @@
+{{extend 'layout.html'}}
+
+{{block header}}
+<br />
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>{{=T("Upload multiple files")}}</h1>
+            <h3>{{=T("Filename length (40), alphanumeric characters and format (pdf, epub or png)")}}</h3>
+            <hr />
+        </div>
+    </div>
+</div>
+{{end}}
+
+<div class="row">
+    <div class="col-md-12">
+        <h3>{{=T("Progress bar of a individual file...")}}</h3>
+        <div class="progress">
+              <div class="progress-bar progress-bar-striped active progressfile" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+              </div>
+        </div>
+        <h3>{{=T("Progress bar of all file...")}}</h3>
+        <div class="progress">
+              <div class="progress-bar progress-bar-success progress-bar-striped active progressAllfile" role="progressbar" aria-valuemin="0" aria-valuemax="100" >
+              </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row">
+    <div class="col-md-6">
+        {{=form}}
+    </div>
+    <div class="col-md-6">
+        <h3>{{=T("List of all file to upload...")}}</h3>
+        <ul id="files" class="nav nav-pills nav-stacked"></ul>
+    </div>
+</div>
+
+
+{{block page_js}}
+{{super}}
+
+<script src='{{=URL("static","js/vendor/jquery.ui.widget.js")}}'></script>
+<script src='{{=URL("static","js/vendor/jquery.iframe-transport.js")}}'></script>
+<script src='{{=URL("static","js/vendor/jquery.fileupload.js")}}'></script>
+<script text="javascript">
+$(function () {
+    var category,
+        rtype=null;
+
+    $("input[type=submit]").click(function(event){
+        event.preventDefault();
+        category = $("#resource_category").val();
+        rtype = $("#resource_rtype").val();
+    });
+
+    $("#resource_resource").prop('name', 'files[]');
+    $("#resource_resource").attr('data-url', '{{=URL("resource", "admin_upload_file")}}');
+    $("#resource_resource").attr('data-sequential-uploads', false);
+    $("#resource_resource").attr('multiple', true);
+
+    $('#resource_resource').fileupload({
+        dataType: 'json',
+        acceptFileTypes: /(\.|\/)(pdf|epub|png)$/i,
+        add: function (e, data) {
+            $.each(data.files, function (index, file) {
+               $("#files").append("<li>"+file.name+"</li>");
+            });
+               $("input[type=submit]").click(function (event) {
+                    data.submit();
+                    event.preventDefault();
+                });
+        },
+        done: function (e, data) {
+            $("input[type=submit]").text('Upload complete');
+        },
+        progressall: function (e, data) {
+            var progress = parseInt(data.loaded / data.total * 100, 10);
+            $('.progress .progressAllfile').css(
+                'width',
+                progress + '%'
+            );
+            $('.progress .progressAllfile').text(progress + " %");
+        },
+        submit: function (e, data) {
+            data.formData = {rtype: rtype, category: category};
+        },
+        progress: function (e, data) {
+            var progress = parseInt(data.loaded / data.total * 100, 10);
+            $('.progress .progressfile').css(
+                'width',
+                progress + '%'
+            );
+
+            $('.progress .progressfile').text(progress + " %");
+        }
+    });
+});
+</script>
+{{end}}

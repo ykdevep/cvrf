@@ -1,0 +1,134 @@
+/* YOUR CUSTOM STYLES */
+
+/*Configuracion font-family UPR*/
+@font-face {
+    font-family: 'MyriadPro-Light';
+    src: url('fonts/upr/MyriadPro-Light.otf');
+  }
+
+@font-face {
+    font-family: 'MyriadPro-Regular';
+    src: url('fonts/upr/MyriadPro-Regular.otf');
+  }
+
+@font-face {
+    font-family: 'MyriadPro-It';
+    src: url('fonts/upr/MyriadPro-It.otf');
+  }
+
+body {
+    font-family: 'MyriadPro-Light';
+    line-height: 30px;
+    height: auto;
+    min-height: 100%;
+}
+
+h1, h2, h3 {
+    line-height: 30px;
+}
+
+h1,h2,h3,h4,h5{
+    font-weight: 100;
+}
+
+h1{
+    font-family: 'MyriadPro-Light';
+    color: #333;
+    font-size: 24px;
+}
+
+h2{
+    font-family: 'MyriadPro-Light';
+    font-size: 22px;
+    color: #333;
+}
+
+h3{
+    font-family: 'MyriadPro-Regular';
+    font-size: 20px;
+}
+
+h4{
+    font-family: 'MyriadPro-Regular';
+    font-size: 18px;
+}
+
+h5{
+    font-family: 'MyriadPro-It';
+    font-size: 14px;
+}
+
+p, li, a{
+    font-family: 'MyriadPro-Regular';
+    font-size: 16px;
+    color: #333;
+}
+
+a {
+    font-family: 'MyriadPro-Regular';
+    font-size: 16px;
+    cursor: hand;
+}
+
+html,
+body,
+.view {
+    height: 100%;
+}
+
+.view {
+    background: url("../img/homepage_background.jpg")no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.full-bg-img > div {
+    background-color: rgba(43, 187, 173, 0.40);
+    padding: 15%;
+}
+
+.footer-copyright, .resources-type {
+    background-color: #2BBBAD;
+}
+
+.card .card-title {
+    color: #2BBBAD;
+}
+
+.navbar-default {
+    background-color: rgba(68, 175, 119, 0.99);
+    padding: 0px;
+}
+
+.top-nav-collapse {
+    background-color: rgba(68, 175, 119, 0.99);
+}
+
+.full-height {
+    min-height: 100%;
+    height: auto;
+}
+
+
+#services {
+    padding: 3%;
+}
+
+#services > div.container-fluid > .row {
+    margin: 2%;
+}
+
+.img-service {
+    margin-left: 25%;
+}
+
+#about, #information  {
+    background-color: #2BBBAD;
+    padding: 3%;
+}
+
+#counter {
+    background-color: white;
+}

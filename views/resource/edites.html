@@ -1,0 +1,188 @@
+{{extend 'layout.html'}}
+
+{{block header}}
+<br />
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>{{=T('Edites')}}</h1>
+            <hr />
+        </div>
+    </div>
+</div>
+{{end}}
+
+{{if not request.args:}}
+
+    <div class="row">
+        <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modal">
+          <ico class="glyphicon glyphicon-upload"></ico> {{=T("Upload resource")}}
+        </a>
+    </div>
+
+    <br />
+
+{{pass}}
+
+<div id="grid">
+    {{=grid}}
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <a class="close btn-close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></a>
+        <h4 class="modal-title" id="myModalLabel">{{=T("Upload")}}</h4>
+      </div>
+      <div class="modal-body">
+          <div class="row">
+              <div class="col-md-12">
+                  <a class="btn btn-success btn-lg file-input-button" title="{{=T('Filename length (40), alphanumeric characters and format (pdf, epub or png)')}}" data-toggle='tooltip' data-placement="right">
+                      <i class="glyphicon glyphicon-plus"></i>
+                      <span>{{=T("Select files or drop and drag here")}}</span>
+                      <!-- The file input field used as target for the file upload widget -->
+                      <input id="fileupload" type="file" name="files[]" multiple data-placement="right" >
+                  </a>
+              </div>
+          </div>
+
+            <br>
+            <!-- The global progress bar -->
+            <div id="progress" class="progress">
+                <div class="progress-bar progress-bar-success"></div>
+            </div>
+            <!-- The container for the uploaded files -->
+            <ul id="files" class="files nav"></ul>
+            <br>
+
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-default btn-close" data-dismiss="modal">{{=T("Close")}}</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{block head}}
+{{super}}
+<link href="{{=URL('static', 'css/summernote/summernote.css')}}" rel="stylesheet" type="text/css" />
+<link href="{{=URL('static', 'css/font-awesome.min.css')}}" rel="stylesheet" type="text/css" />
+
+<style>
+    .fileinput-button {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+    }
+
+    .file-input-button {
+        margin-left: 0px;
+        width: 100%;
+    }
+
+    .file-input-button input {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      margin: 0;
+      opacity: 0;
+      font-size: 45px;
+      direction: ltr;
+      width: 100%;
+    }
+
+    .file-input-button:hover,  .file-input-button > input:hover, .file-input-button > span:hover {
+        cursor: pointer;
+    }
+
+    #files li{
+        padding: 4px;
+    }
+
+    /* Fixes for IE < 8 */
+    @media screen\9 {
+      .fileinput-button input {
+        filter: alpha(opacity=0);
+        font-size: 100%;
+        height: 100%;
+      }
+    }
+</style>
+
+<script src='{{=URL("static","js/vendor/jquery.ui.widget.js")}}'></script>
+<script src='{{=URL("static","js/vendor/jquery.iframe-transport.js")}}'></script>
+<script src='{{=URL("static","js/vendor/jquery.fileupload.js")}}'></script>
+
+{{end}}
+
+{{language = 'en-EN'}}
+{{if (T.accepted_language == 'es' ):}}
+   {{language = 'es-ES'}}
+{{pass}}
+
+{{block page_js}}
+  {{super}}
+  <script src="{{=URL('static', 'js/summernote/summernote.min.js')}}"></script>
+    {{if language == 'es-ES':}}
+       <script src="{{=URL('static', 'js/summernote/locales/summernote-es-ES.js')}}"></script>
+    {{pass}}
+<script>
+ $(function() {
+     $(".btn-close").click(function(event){
+         location.reload();
+     });
+
+     $('#resource_coverpag__row > div > div > span').hide();
+
+
+     /*Upload resorces*/
+     $('#fileupload').fileupload({
+        url: '{{=URL("resource", "upload_file")}}',
+        dataType: 'json',
+        acceptFileTypes: /(\.|\/)(pdf|epub|png)$/i,
+        done: function (e, data) {
+            var result = JSON.parse(data.result);
+            if (result.success){
+                $('<li/>').html($('<a/>',{'class': "alert-sucess"}).html(result.name+' <ico class="glyphicon glyphicon-ok"></ico>')).appendTo('#files');
+            }else{
+                $('<li/>').html($('<a/>',{'class': 'alert-danger', 'title': result.message, 'data-toggle': 'tooltip'}).html(result.name+' <ico class="glyphicon glyphicon-remove"></ico>')).appendTo('#files');
+            }
+        },
+        add: function (e, data) {
+            $('#progress .progress-bar').css(
+                'width',
+                0 + '%'
+            );
+            data.submit();
+        },
+        progressall: function (e, data) {
+            var progress = parseInt(data.loaded / data.total * 100, 10);
+            $('#progress .progress-bar').css(
+                'width',
+                progress + '%'
+            );
+        }
+    });
+
+     /*Visibility of the resource description*/
+     $('#resource_description').summernote({fontNames: ['Arial', 'MyriadPro-Light', 'MyriadPro-Regular'],
+            toolbar: [
+            //[groupname, [button list]]
+               ['style', ['style', 'bold','italic', 'underline', 'clear']],
+               ['font', ['strikethrough', 'superscript', 'subscript']],
+               ['fontsize', ['fontname']],
+               ['color', ['color']],
+               ['para', ['ul', 'ol', 'paragraph']],
+               ['height', ['height']],
+               ['insert', ['link', 'table', 'hr']],
+               ['misc', ['fullscreen', 'codeview', 'undo','redo', 'help']],
+            ],
+            lang: '{{=language}}',
+            height: 250,   //set editable area's height
+    });
+ });
+</script>
+{{end}}
