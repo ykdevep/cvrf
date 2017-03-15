@@ -36,7 +36,8 @@ def user():
     to decorate functions that need access control
     also notice there is http://..../[app]/appadmin/manage/auth to allow administrator to manage users
     """
-    response.title = T(request.args(0).capitalize())+response.title
+    if request.args(0):
+        response.title = T(request.args(0).capitalize())+response.title
     return dict(form=auth())
 
 @auth.requires_login()

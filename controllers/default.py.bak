@@ -45,6 +45,9 @@ def dashboard():
     Escritorio de trabajo
     '''
 
+    response.title = T("Dashboard") + response.title
+    response.flash = T("Dashboard")
+
     return dict()
 
 @cache.action()

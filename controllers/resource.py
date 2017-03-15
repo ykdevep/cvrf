@@ -1,13 +1,152 @@
 # -*- coding: utf-8 -*-
 # intente algo como
+def search():
+    '''
+    Buscar recursos
+    '''
+    response.title = T("Buscando") + response.title
+    response.flash = T("Buscando...")
+    return dict()
+
+@auth.requires_membership("Publicador")
+def publish():
+    '''
+    El revisor revisa los recursos en estado de revición, los rechaza o lo acepta
+    '''
+    def __publish_resource(ids):
+        '''
+        Acepta los recursos seleccionados
+        '''
+        state = db(db.state.name == "Publicado").select(db.state.id).first()
+        for resource in db(db.resource.id.belongs(ids)).select():
+            resource.state = state.id
+            resource.update_record()
+        return True
+
+    reviews = None
+
+    selectable = lambda ids: __publish_resource(ids)
+
+    query = (db.resource.id > 0)
+    left = (db.resource.on((db.resource.state == db.state.id) & (db.state.name == "Aceptado")))
+
+    fields = [db.resource.id, db.resource.title, db.resource.rtype, db.resource.language, db.resource.category, db.resource.state, db.resource.year, db.resource.keyword, db.resource.author]
+
+    grid = SQLFORM.grid(query, left=left, selectable=selectable, fields=fields, orderby=~db.resource.id, advanced_search=False, create=False, editable=False, deletable=False, selectable_submit_button=T('Publish'))
+
+    heading=grid.elements('th')
+    if heading:
+        heading[0].append(INPUT(_type='checkbox', _onclick="$('input[type=checkbox]').each(function(k){$(this).attr('checked', 'checked');});"))
+
+    response.title = T("Para Publicar") + response.title
+    response.flash = T("Para Publicar")
+
+    if ("view" in request.args):
+        reviews = db((db.review.id > 0) & (db.review.resource == request.args(-1))).select(orderby=~db.review.created_on)
+
+    return dict(grid=grid, reviews=reviews)
+
+@auth.requires_membership("Revisor")
+def revised():
+    '''
+    El revisor revisa los recursos en estado de revición, los rechaza o lo acepta
+    '''
+    def __acepted_resource(ids):
+        '''
+        Acepta los recursos seleccionados
+        '''
+        state = db(db.state.name == "Aceptado").select(db.state.id).first()
+        for resource in db(db.resource.id.belongs(ids)).select():
+            resource.state = state.id
+            resource.update_record()
+        return True
+
+    reviews = None
+
+    selectable = lambda ids: __acepted_resource(ids)
+
+    query = (db.resource.category.belongs(auth.user.categories_review))
+    left = (db.resource.on((db.resource.state == db.state.id) & (db.state.name == "Revición")))
+
+    fields = [db.resource.id, db.resource.title, db.resource.rtype, db.resource.language, db.resource.category, db.resource.state, db.resource.year, db.resource.keyword, db.resource.author]
+
+    grid = SQLFORM.grid(query, left=left, selectable=selectable, fields=fields, orderby=~db.resource.id, advanced_search=False, create=False, editable=False, deletable=False, selectable_submit_button=T('Acept'))
+
+    heading=grid.elements('th')
+    if heading:
+        heading[0].append(INPUT(_type='checkbox', _onclick="$('input[type=checkbox]').each(function(k){$(this).attr('checked', 'checked');});"))
+
+    response.title = T("Para Revisar") + response.title
+    response.flash = T("Para Revisar")
+
+    if ("view" in request.args):
+        reviews = db((db.review.id > 0) & (db.review.resource == request.args(-1))).select(orderby=~db.review.created_on)
+
+    return dict(grid=grid, reviews=reviews)
+
+def review():
+    '''
+    Componente que implementa el proceso de revición
+    '''
+
+    resource = db.resource(request.args(-1))
+
+    form = SQLFORM(db.review, formstyle='bootstrap3_stacked')
+    opts = [OPTION(state.name, _value=state.id) for state in db((db.state.id > 0) & (db.state.name == "Rechazado") | (db.state.name == "Aceptado")).select(db.state.id, db.state.name, orderby=~db.state.id)]
+
+    if ("Administrador" in auth.user_groups.values()) or ("Publicador" in auth.user_groups.values()):
+        opts = [OPTION(state.name, _value=state.id) for state in db((db.state.id > 0) & (db.state.name == "Rechazado") | (db.state.name == "Publicado")).select(db.state.id, db.state.name, orderby=db.state.id)]
+
+    form[0].insert(-1, INPUT(_type="hidden", _value=resource.id, _name="resource"))
+    form[0].insert(-1, CAT(LABEL(T("Nuevo estado del recurso")), SELECT(*opts, _name="state", _value=T("Estado del Recurso"), _class="form-control")))
+
+    if form.validate():
+        db.review.insert(resource=form.vars.resource, note=form.vars.note, success=form.vars.success)
+        resource.state = form.vars.state
+        resource.update_record()
+        response.flash = T('Nueva revición agregada')
+    elif form.errors:
+        response.flash = T('El formulario tiene errores')
+
+    import app_tools
+    limitby = None
+    PAGINATE = 5
+
+    try:
+        page = int(request.vars.page or 1)-1
+    except ValueError:
+        page = 0
+
+    limitby=(page*PAGINATE, (page+1)*PAGINATE)
+
+    query = (db.review.id > 0) & (db.review.resource == resource.id)
+
+    reviews = db(query).select(orderby=~db.review.created_on, limitby=limitby)
+    count=db(query).count()
+
+    return dict(form=form, reviews=reviews, count=count, paginator=app_tools.paginator(PAGINATE, count), paginate=PAGINATE, resource=db.resource(request.args(-1)))
+
 @auth.requires_login()
 def my_briefcase():
     """
     Descargar todos los recursos que son de mi interés (a los que le di mi voto) en formato .zip
     """
+    def __resource_quit(ids):
+        """
+        Resource quit of the my briefcase
+        """
+        for id in ids:
+            resource = db.resource(id)
+            votes_user = resource.votes_user.remove(auth.user.id)
+            if votes_user:
+                resource.update_record(votes_user = votes_user)
+            else:
+                resource.update_record(votes_user = [])
+        return True
+
     editable = False
 
-    selectable = lambda ids: resource_quit(ids)
+    selectable = lambda ids: __resource_quit(ids)
 
     if (auth.has_membership('Administrador') or auth.has_membership('Revisor')):
         editable = deletable = True
@@ -16,30 +155,16 @@ def my_briefcase():
     left = db.resource.on((db.resource.state == db.state.id) & (db.state.name == "Publicado"))
     fields = [db.resource.id, db.resource.resource, db.resource.title,  db.resource.language, db.resource.category, db.resource.rtype, db.resource.year]
 
-    grid = SQLFORM.grid(query, left=left, selectable=selectable, fields=fields, orderby=~db.resource.id, create=False, deletable=deletable, editable=editable, links_in_grid=False)
+    grid = SQLFORM.grid(query, left=left, selectable=selectable, fields=fields, orderby=~db.resource.id, advanced_search=False, create=False, deletable=deletable, editable=editable, links_in_grid=False)
 
     heading=grid.elements('th')
     if heading:
-           heading[0].append(INPUT(_type='checkbox', _onclick="jQuery('input[type=checkbox]').each(function(k){jQuery(this).attr('checked', 'checked');});"))
+           heading[0].append(INPUT(_type='checkbox', _onclick="$('input[type=checkbox]').each(function(k){$(this).attr('checked', 'checked');});"))
 
     response.title = T("My Briefcase") + response.title
     response.flash = T("My Briefcase")
 
     return dict(grid=grid)
-
-@auth.requires_login()
-def resource_quit(ids):
-    """
-    Resource quit of the my briefcase
-    """
-    for id in ids:
-        resource = db.resource(id)
-        votes_user = resource.votes_user.remove(auth.user.id)
-        if votes_user:
-            resource.update_record(votes_user = votes_user)
-        else:
-            resource.update_record(votes_user = [])
-    return True
 
 @auth.requires_login()
 def multiple_downloads():
@@ -67,26 +192,6 @@ def multiple_downloads():
     return response.stream(out, request=request)
 
 @auth.requires_login()
-@auth.requires(lambda:  to_review())
-def revised():
-    """
-    """
-    links=[]
-
-    selectable = lambda ids: db(db.resource.id.belongs(ids)).delete()
-    query = ((db.resource.state == 2) & (db.resource.category.belongs(auth.user.categories)))
-
-    fields = [db.resource.id, db.resource.title,  db.resource.language, db.resource.category, db.resource.state]
-
-    grid = SQLFORM.grid(query, selectable=selectable, fields=fields, orderby=~db.resource.id, create=False, links=links, links_in_grid=False)
-
-    heading=grid.elements('th')
-    if heading:
-           heading[0].append(INPUT(_type='checkbox', _onclick="jQuery('input[type=checkbox]').each(function(k){jQuery(this).attr('checked', 'checked');});"))
-
-    return dict(grid=grid)
-
-@auth.requires_login()
 def edites():
     """
     Grid to edit resource in edition or rechazed state
@@ -101,7 +206,7 @@ def edites():
         links.append({'header': T('Take coverpage'), 'body': lambda row: A(XML('<i class="glyphicon glyphicon-camera"></i> '), _class="btn btn-info btn-menu", _href=URL(args=request.args, vars=dict(option="coverpage"), user_signature=True, hash_vars=False), **{'_data-toggle': "tooltip", '_title': T("Take coverpage image"), '_data-placement': "top"})})
 
         if request.vars.option:
-            __extract(db.resource(request.args[-1]), request.vars.option)
+            __extract(db.resource(request.args(-1)), request.vars.option)
 
     selectable = lambda ids: db(db.resource.id.belongs(ids)).delete()
 
@@ -109,11 +214,11 @@ def edites():
     left = (db.resource.on((db.resource.state == db.state.id) & ((db.state.name == "Edición") | (db.state.name == "Rechazado"))))
     fields = [db.resource.id, db.resource.resource, db.resource.title,  db.resource.language, db.resource.category, db.resource.rtype, db.resource.year]
 
-    grid = SQLFORM.grid(query, left=left, selectable=selectable, fields=fields, links=links, orderby=~db.resource.id, create=False, links_in_grid=False)
+    grid = SQLFORM.grid(query, left=left, selectable=selectable, fields=fields, links=links, orderby=~db.resource.id, create=False, advanced_search=False, links_in_grid=False)
 
     heading=grid.elements('th')
     if heading:
-           heading[0].append(INPUT(_type='checkbox', _onclick="jQuery('input[type=checkbox]').each(function(k){jQuery(this).attr('checked', 'checked');});"))
+           heading[0].append(INPUT(_type='checkbox', _onclick="$('input[type=checkbox]').each(function(k){$(this).attr('checked', 'checked');});"))
 
     response.title = T("Editar") + response.title
 
@@ -123,7 +228,6 @@ def __extract(resource, option):
     '''
     Función auxiliar que permite extraer los metadatos o extraer imagen del cover de un recurso en edición
     '''
-
     import app_resource
 
     if  option == "coverpage":
@@ -134,43 +238,15 @@ def __extract(resource, option):
         except Exception, e:
             response.flash = T("Failed to take image")
     elif option == "metadata":
-        try:
-            classResource = app_resource.resourceMetadata(resource.resource)
-            resource.update_record(**classResource.getMetadata())
-            response.flash = T("Extract metadata")
-        except Exception, e:
-            response.flash = T("Failed to extract metadata")
+        #try:
+        classResource = app_resource.resourceMetadata(resource.resource)
+        print classResource.getMetadata()
+        resource.update_record(**classResource.getMetadata())
+        response.flash = T("Extract metadata")
+        #except Exception, e:
+        #    response.flash = T("Failed to extract metadata")
     else:
         response.flash = T("Error option not found")
-
-@auth.requires_membership("Revisors")
-def table():
-    """
-    Administrate tables
-    """
-    table = request.args(0) or 'publisher'
-    if not table in db.tables(): grid=None
-
-    selectable = lambda ids: db(db[table].id.belongs(ids)).delete()
-
-    grid = SQLFORM.smartgrid(db[table], args=request.args[:1], linked_tables=[], selectable=selectable)
-
-    heading=grid.elements('th')
-    if heading:
-        heading[0].append(INPUT(_type='checkbox', _onclick="jQuery('input[type=checkbox]').each(function(k){jQuery(this).attr('checked', 'checked');});"))
-
-    response.flash = T(table.replace("_", " "))
-
-    return dict(grid=grid)
-
-def is_public():
-    """
-    Validate that is public resource
-    """
-    resource = db((db.resource.id == request.args[-1]) & (db.resource.state == 3)).isempty()
-    if resource:
-        return False
-    return True
 
 def add_vote():
     """
@@ -210,7 +286,6 @@ def add_comment():
     """
     Add comment to resource
     """
-
     form=SQLFORM(db.comment, submit_button=T('Comment'))
     if form.validate():
         db.comment.insert(body=request.vars.body, resource=request.args(0))
@@ -249,7 +324,6 @@ def downloads():
         resource.update_record(downloads = resource.downloads + 1, modified_on=resource.modified_on)
     return response.download(request, db)
 
-
 @auth.requires_membership("Administrador")
 def admin_table():
     """
@@ -260,7 +334,7 @@ def admin_table():
 
     selectable = lambda ids: db(db[table].id.belongs(ids)).delete()
 
-    grid = SQLFORM.smartgrid(db[table], args=request.args[:1], linked_tables=[], selectable=selectable)
+    grid = SQLFORM.smartgrid(db[table], args=request.args[:1], linked_tables=[], advanced_search=False, selectable=selectable)
 
     heading=grid.elements('th')
     if heading:
@@ -269,24 +343,6 @@ def admin_table():
     response.title = T(table.replace("_", " ").capitalize()) + response.title
     response.flash = T(table.replace("_", " ").capitalize())
 
-    return dict(grid=grid)
-
-@auth.requires_membership("Administrador")
-def admin_category():
-    """
-    Administrate categories
-    """
-    selectable = lambda ids: db(db.category.id.belongs(ids)).delete()
-
-    fields = [db.category.id, db.category.name]
-    grid = SQLFORM.smartgrid(db.category, fields=fields, selectable=selectable, linked_tables=['category'])
-
-    heading=grid.elements('th')
-    if heading:
-           heading[0].append(INPUT(_type='checkbox', _onclick="jQuery('input[type=checkbox]').each(function(k){jQuery(this).attr('checked', 'checked');});"))
-
-    response.title = T("Administrate categories") + response.title
-    response.flash = T("Administrate categories")
     return dict(grid=grid)
 
 @auth.requires_membership("Administrador")
@@ -310,8 +366,17 @@ def admin():
     links=[]
     selectable=orderby=fields=None
 
-    if not "comment.resource" in request.args:
-
+    if "comment.resource" in request.args:
+        selectable = lambda ids: db(db.comment.id.belongs(ids)).delete()
+        fields = [db.comment.id, db.comment.body, db.comment.resource]
+        response.title = T("Administrate comments") + response.title
+        response.flash = T("Administrate comments")
+    elif "review.resource" in request.args:
+        selectable = lambda ids: db(db.review.id.belongs(ids)).delete()
+        fields = [db.review.id, db.review.success, db.review.note]
+        response.title = T("Administrate reviews") + response.title
+        response.flash = T("Administrate reviews")
+    else:
         response.flash = T("Administrate resources")
 
         if "edit" in request.args:
@@ -327,13 +392,7 @@ def admin():
         orderby=~db.resource.id
         response.title = T("Administrate Resource") + response.title
 
-    else:
-        selectable = lambda ids: db(db.comment.id.belongs(ids)).delete()
-        fields = [db.comment.id, db.comment.body, db.comment.resource]
-        response.title = T("Administrate comments") + response.title
-        response.flash = T("Administrate comments")
-
-    grid = SQLFORM.smartgrid(db.resource, fields=fields, links=links, selectable=selectable, linked_tables=['comment'], links_in_grid=False, ignore_rw=True, orderby=orderby)
+    grid = SQLFORM.smartgrid(db.resource, fields=fields, links=links, selectable=selectable, linked_tables=['comment', 'review'], links_in_grid=False, ignore_rw=True, orderby=orderby)
 
     heading=grid.elements('th')
     if heading:

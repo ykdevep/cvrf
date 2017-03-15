@@ -1,0 +1,8 @@
+This app is for resources repository Developed with web2py.
+
+Install requirements
+apt-get install python-wand python-magic python-pypdf.
+pip install epubzilla.
+
+For UPR AD autentication.
+apt-get install python-ldap

@@ -1,0 +1,38 @@
+{{extend 'layout.html'}}
+
+{{block header}}
+
+<br />
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>{{=T('Resource')}}</h1>
+            <hr>
+        </div>
+    </div>
+</div>
+{{end}}
+
+{{if ("view" in request.args):}}
+    <div id="grid" class="col-md-6">
+        {{=grid}}
+    </div>
+
+    <div id="grid" class="col-md-6">
+        {{=LOAD('resource','review.load', args=request.args(-1), ajax=True)}}
+    </div>
+{{else:}}
+    <div id="grid" class="col-md-12">
+        {{=grid}}
+    </div>
+{{pass}}
+
+{{block head}}
+{{super}}
+    <style>
+        #resource_state__row {
+            visibility: hidden;
+        }
+    </style>
+{{end}}

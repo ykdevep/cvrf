@@ -39,12 +39,13 @@
       <div class="modal-body">
           <div class="row">
               <div class="col-md-12">
-                  <a class="btn btn-success btn-lg file-input-button" title="{{=T('Filename length (40), alphanumeric characters and format (pdf, epub or png)')}}" data-toggle='tooltip' data-placement="right">
+                  <a class="btn btn-success btn-lg file-input-button">
                       <i class="glyphicon glyphicon-plus"></i>
                       <span>{{=T("Select files or drop and drag here")}}</span>
                       <!-- The file input field used as target for the file upload widget -->
                       <input id="fileupload" type="file" name="files[]" multiple data-placement="right" >
                   </a>
+                  <span>{{=CAT(T('Filename length (40), alphanumeric characters and format (pdf, epub or png)'))}}</span>
               </div>
           </div>
 
@@ -89,7 +90,6 @@
       right: 0;
       margin: 0;
       opacity: 0;
-      -ms-filter: 'alpha(opacity=0)';
       font-size: 45px;
       direction: ltr;
       width: 100%;

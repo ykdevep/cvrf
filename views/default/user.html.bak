@@ -16,10 +16,10 @@
 
 if request.args(0)=='login' and not session.auth_2_factor_user:
     if not 'register' in auth.settings.actions_disabled:
-        form.add_button(T('Register'),URL(args='register', vars={'_next': request.vars._next} if request.vars._next else None),_class='btn btn-info')
+        form.add_button(T('Register'),URL(args='register', vars={'_next': request.vars._next} if request.vars._next else None),_class='btn btn-success')
     pass
     if not 'request_reset_password' in auth.settings.actions_disabled:
-        form.add_button(T('Lost Password'),URL(args='request_reset_password'),_class='btn btn-info')
+        form.add_button(T('Lost Password'),URL(args='request_reset_password'),_class='btn btn-success')
     pass
 pass
 }}
@@ -36,4 +36,18 @@ jQuery("#web2py_user_form input:visible:enabled:first").focus();
 {{elif request.args(0) in ('change_password','reset_password'):}}
     web2py_validate_entropy(jQuery('#no_table_new_password'),100);
 {{pass}}
-//--></script>
+</script>
+
+{{if request.args(0) == 'register' or request.args(0) == 'profile':}}
+    <script>
+        $(document).ready(function(){
+           $('#contribuyente_nombre_esposa__row').hide();
+           $('#auth_user_notification').change(function(){
+                if($('#auth_user_notification').prop('checked'))
+                    $('#auth_user_categories__row, #auth_user_types__row').show();
+                else
+                    $('#auth_user_categories__row, #auth_user_types__row').hide();
+           });
+       });
+    </script>
+{{pass}}

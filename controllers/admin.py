@@ -20,16 +20,7 @@ def website():
     return dict(grid=grid)
 
 @auth.requires_membership("Administrador")
-def dashboard():
-    """
-    Admin dashboard
-    """
-    response.flash = T("Dashboard")
-    response.title = T("Dashboard")+response.title
-    return dict()
-
-@auth.requires_membership("Administrador")
-def user():
+def user_roles():
     """
     Administrate users and users group
     """
@@ -44,6 +35,44 @@ def user():
 
     response.flash = T("Administrate users")
     response.title = T("Administrate users")+response.title
+    return dict(grid=grid)
+
+@auth.requires_membership("Administrador")
+def category():
+    """
+    Administrate categories
+    """
+    selectable = lambda ids: db(db.category.id.belongs(ids)).delete()
+
+    fields = [db.category.id, db.category.name]
+    grid = SQLFORM.smartgrid(db.category, fields=fields, selectable=selectable, linked_tables=['category'])
+
+    heading=grid.elements('th')
+    if heading:
+           heading[0].append(INPUT(_type='checkbox', _onclick="jQuery('input[type=checkbox]').each(function(k){jQuery(this).attr('checked', 'checked');});"))
+
+    response.title = T("Administrate categories") + response.title
+    response.flash = T("Administrate categories")
+    return dict(grid=grid)
+
+@auth.requires_membership("Administrador")
+def table():
+    """
+    Administrate tables
+    """
+    table = request.args(0) or 'publisher'
+    if not table in db.tables(): grid=None
+
+    selectable = lambda ids: db(db[table].id.belongs(ids)).delete()
+
+    grid = SQLFORM.smartgrid(db[table], args=request.args[:1], linked_tables=[], selectable=selectable)
+
+    heading=grid.elements('th')
+    if heading:
+        heading[0].append(INPUT(_type='checkbox', _onclick="jQuery('input[type=checkbox]').each(function(k){jQuery(this).attr('checked', 'checked');});"))
+
+    response.flash = T(table.replace("_", " "))
+
     return dict(grid=grid)
 
 @auth.requires_membership("Administrador")

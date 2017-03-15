@@ -1,0 +1,65 @@
+<div id="grid" class="col-md-12">
+    {{if resource.state.name == "Revición" or (("Publicador" in auth.user_groups.values()) and (resource.state.name == "Aceptado")):}}
+        {{=form}}
+    {{pass}}
+</div>
+
+{{if reviews:}}
+    {{import datetime}}
+    {{from gluon.tools import prettydate}}
+
+    <div id="grid" class="col-md-12">
+        <h2>{{=T("Reviews")}}</h2>
+        {{i=0.2}}
+        <h2>{{=CAT(T("Total")," ",count)}}</h2>
+
+        {{for review in reviews:}}
+            <!--Card-->
+            <div class="card wow fadeIn" data-wow-delay="{{=i}}s" style="padding: 5px; margin: 5px;">
+                <!--Card title-->
+                <div class="overlay hm-white-slight">
+                    {{=H3(CAT(T("Created on"), ' ', prettydate(review.created_on,T), ' ',T("by"), ' ', review.created_by.username))}}
+                    <!--Text-->
+                    <hr/>
+                </div>
+                <!--/.Card title-->
+
+                <!--Card content-->
+                <div class="card-block text-xs-center">
+                    <div class="row">
+                        <div class="col-md-12">
+                            {{if review.success:}}
+                                <div class="alert alert-success alert-dismissible message" role="alert">
+                                    <span style="position: relative; float: right"><ico class="glyphicon glyphicon-ok"></ico></span>
+                                    {{=review.note}}
+                                </div>
+                            {{else:}}
+                                <div class="alert alert-danger alert-dismissible message" role="alert">
+                                    <span style="position: relative; float: right"><ico class="glyphicon glyphicon-remove"></ico></span>
+                                    {{=review.note}}
+                                </div>
+                            {{pass}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--/.Card content-->
+            {{i=i+0.2}}
+        {{pass}}
+        {{if count>paginate:}}
+            <div class="row">
+                <div class="web2py_paginator">
+                    {{=paginator}}
+                </div>
+            </div>
+        {{pass}}
+    </div>
+{{else:}}
+    <h1>{{=T("No hay reviciones para este recurso")}}</h1>
+{{pass}}
+
+<script>
+    $(function(event){
+        $('#review_note').attr('rows', 5);
+    });
+</script>

@@ -32,7 +32,8 @@ def paginator(paginate, count):
         page = 0
     def __self_link(name, p):
         d = dict(current.request.vars, page=p+1)
-        return A(name, _href=URL('default', 'index.html', args=current.request.args, vars=d))
+        #return A(name, _href=URL('default', 'index.html', args=current.request.args, vars=d))
+        return A(name, _href=URL(args=current.request.args, vars=d), cid=current.request.cid)
     paginator = UL()
     if paginate and paginate < count:
         npages, reminder = divmod(count, paginate)

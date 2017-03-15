@@ -1,0 +1,32 @@
+{{extend 'layout.html'}}
+
+{{block header}}
+<br />
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>{{=T("Administrate users")}}</h1>
+            <hr />
+        </div>
+    </div>
+</div>
+{{end}}
+
+{{=grid}}
+
+{{if not "auth_membership.user_id" in request.args:}}
+    <script>
+        $(document).ready(function(){
+           if($('#auth_user_notification').prop('checked'))
+               $('#auth_user_categories__row, #auth_user_types__row').show();
+           else
+               $('#auth_user_categories__row, #auth_user_types__row').hide();
+           $('#auth_user_notification').change(function(){
+                if($('#auth_user_notification').prop('checked'))
+                    $('#auth_user_categories__row, #auth_user_types__row').show();
+                else
+                    $('#auth_user_categories__row, #auth_user_types__row').hide();
+           });
+       });
+    </script>
+{{pass}}

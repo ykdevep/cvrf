@@ -7,7 +7,7 @@ from pydal.helpers import regex
 import os, datetime, magic
 from wand.image import Image
 from pyPdf import PdfFileReader
-#from epubzilla.epubzilla import Epub
+from epubzilla.epubzilla import Epub
 
 CONST_IMAGE_WIDTH = 120
 CONST_IMAGE_HEIGTH = 160

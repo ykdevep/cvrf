@@ -1,0 +1,10 @@
+{{extend 'layout.html'}}
+
+{{block header}}
+    <h3>sdASDAd</h3>
+{{end}}
+
+{{loader = DIV(DIV(DIV(IMG(_src=URL("static","img/loader.gif"), _width="40%"), _class="col-md-5 col-md-offset-5"), _class="row"), _class="container")}}
+
+
+{{=LOAD("resource", "search.load", args=request.args, vars=request.vars, ajax=True, content=loader, user_signature=True)}}

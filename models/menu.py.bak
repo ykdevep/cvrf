@@ -66,14 +66,14 @@ def _():
     # Menu del administrador
     if(auth.has_membership("Administrador")):
         response.menu += [(T("Administration"),False, URL("default", "dashboard"), [
-            ("user", False, A(CAT(XML('<ico class="glyphicon glyphicon-user"></ico> '), T("Users")), _href=URL("admin", "user"), **{"_data-target": "#user"})),
+            ("user_roles", False, A(CAT(XML('<ico class="glyphicon glyphicon-user"></ico> '), T("Users")), _href=URL("admin", "user_roles"), **{"_data-target": "#user_roles"})),
             ("website", False, A(CAT(XML('<ico class="glyphicon glyphicon-home"></ico> '), T("Website")), _href=URL("admin", "website", ), **{"_data-target": "#website"})),
             ("admin", False, A(CAT(XML('<ico class="glyphicon glyphicon-book"></ico> '), T("Resources")), _href=URL("resource", "admin"), **{"_data-target": "#admin"})),
             ("upload", False, A(CAT(XML('<ico class="glyphicon glyphicon-upload"></ico> '), T("Multiple Uploads")), _href=URL("resource", "upload_multiple"), **{"_data-target": "#upload_multiple"})),
             ("manage", False, A(CAT(XML('<ico class="glyphicon glyphicon-lock"></ico> '), T("Appadmin")), _href=URL("appadmin", 'index'), **{"_data-target": "#manage"})),
-            ("admin_category", False, A(CAT(XML('<ico class="glyphicon glyphicon-tags"></ico> '), T("Categories")), _href=URL("resource", "admin_category"), **{"_data-target": "#admin_category"})),
+            ("category", False, A(CAT(XML('<ico class="glyphicon glyphicon-tags"></ico> '), T("Categories")), _href=URL("admin", "category"), **{"_data-target": "#category"})),
             ("scheduler_task", False, A(CAT(XML('<ico class="glyphicon glyphicon-tasks"></ico> '), T("Scheduler Task")), _href=URL("admin", "scheduler_task"), **{"_data-target": "#scheduler_task"})),
-            ("rtype", False, A(CAT(XML('<ico class="glyphicon glyphicon-tag"></ico> '), T("Types")), _href=URL("resource", "admin_table", args=["rtype"]), **{"_data-target": "#rtype"})),
+            ("rtype", False, A(CAT(XML('<ico class="glyphicon glyphicon-tag"></ico> '), T("Types")), _href=URL("admin", "table", args=["rtype"]), **{"_data-target": "#rtype"})),
             ("language", False, A(CAT(XML('<ico class="glyphicon glyphicon-flag"></ico> '), T("Language")), _href=URL("resource", "admin_table", args=["language"]), **{"_data-target": "#language"})),
             ]
             )]
@@ -88,6 +88,9 @@ def _():
         if(auth.has_membership("Revisor")):
             other_menu.append(("revised", False, A(CAT(XML('<ico class="glyphicon glyphicon-book"></ico> '), T("To Revised")), _href=URL("resource", "revised"), **{"_data-target": "#revised"})))
             other_menu.append(("publisher", False, A(CAT(XML('<ico class="glyphicon glyphicon-edit"></ico> '), T("Publisher")), _href=URL("resource", "admin_table", args =["publisher"]), **{"_data-target": "#publisher"})))
+
+        if(auth.has_membership("Publicador")):
+            other_menu.append(("publish", False, A(CAT(XML('<ico class="glyphicon glyphicon-edit"></ico> '), T("To Published")), _href=URL("resource", "publish"), **{"_data-target": "#publish"})))
 
         response.menu += [(T("Resource"),False, URL("default", "dashboard"), other_menu)]
 
