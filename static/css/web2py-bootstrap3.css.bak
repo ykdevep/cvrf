@@ -94,20 +94,35 @@ span.badge {
     text-transform: none;
 }
 
+div.w2p_flash.alert {
+    display: none;
+    opacity: 0.8;
+    position: fixed;
+    top: 65px;
+    right: 10px;
+    cursor: pointer;
+    z-index: 1000;
+    background-color: #009688;
+    color: white;
+    font-size: x-large;
+}
+
 div.w2p_flash {
     font-weight: 400;
-    min-width: 340px;
-    max-width: 340px;
+    min-width: 240px;
+    max-width: 240px;
     opacity: 1;
     vertical-align: baseline;
     right: auto;
     border-width: 1px;
     margin: 0 0 20px;
-    padding: 15px 35px 15px 15px;
+    padding: 10px 15px 10px 15px;
 }
+
 div.w2p_flash.alert:hover {
     opacity: 1;
 }
+
 #closeflash {
     position: relative;
     float: right;
@@ -132,17 +147,7 @@ div.error {
     display: inline-block;
     padding: 5px;
 }
-div.w2p_flash.alert {
-    display: none;
-    position: fixed;
-    top: 90px;
-    right: 170px;
-    cursor: pointer;
-    z-index: 1000;
-    background-color: #009688;
-    color: white;
-    font-size: x-large;
-}
+
 .w2p-toolbar-hidden {
     margin: 10px;
 }
@@ -224,7 +229,6 @@ header .jumbotron {
     background-color: transparent;
 }
 .w2p_flash {
-    opacity: 0.9!important;
     right: 100px;
 }
 .right {

@@ -78,6 +78,7 @@ response.form_label_separator = myconf.get('forms.separator') or ''
 # - old style crud actions
 # (more options discussed in gluon/tools.py)
 # -------------------------------------------------------------------------
+session.connect(request, response, db, masterapp=None, separate=True)
 
 from gluon.tools import Auth, Service, PluginManager
 import os
@@ -112,6 +113,7 @@ db.rtype._singular = T("Type")
 db.rtype._plural = T("Types")
 
 auth.settings.extra_fields['auth_user'] = [
+    Field('conected', 'boolean', default=True, writable=False, readable=False, label=T("User conected")),
     Field('photo', 'upload', autodelete=True, uploadseparate=True, uploadfolder=os.path.join(request.folder,'nfs-uploads'), label=T("Photo"), comment=T("Photo of profile")),
     Field('categories_review', 'list:reference category', label=T("Categories review"), comment=T("List the categories")),
     Field('notification', 'boolean', default=True, label=T("Email notification")),
@@ -150,26 +152,11 @@ db.auth_user.types.requires = IS_IN_DB(db,'rtype.id','rtype.name', multiple=True
 db.auth_user.types.widget = SQLFORM.widgets.checkboxes.widget
 db.auth_user.types.default = lambda : db(db.rtype).select()
 
-def userUpdateBefore(s, f):
-    """
-    Callback for update group revisor of user
-    """
-    try:
-        register = s.select().first()
-        if f.has_key('categories'):
-            if f['categories'] and db((db.auth_membership.user_id == register.id) & (db.auth_membership.group_id == 2)).isempty():
-                auth.add_membership(2, register.id)
-        return None
-    except Exception, e:
-        return True
-
-db.auth_user._before_update.append(lambda s,f: userUpdateBefore(s,f))
-
 from gluon import current
 current.auth = auth
 current.db = db
 
-auth.settings.formstyle = 'bootstrap3_stacked'
+auth.settings.formstyle = 'bootstrap3_inline'
 
 #Active directory UPR
 from gluon.contrib.login_methods.ldap_auth import ldap_auth

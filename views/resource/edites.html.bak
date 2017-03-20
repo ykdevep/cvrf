@@ -24,9 +24,20 @@
 
 {{pass}}
 
-<div id="grid">
-    {{=grid}}
-</div>
+{{if ("view" in request.args):}}
+    <div id="grid" class="col-md-6">
+        {{=grid}}
+    </div>
+
+    <div id="grid" class="col-md-6">
+        {{=LOAD('resource','review.load', args=request.args(-1), ajax=True)}}
+    </div>
+{{else:}}
+    <div id="grid" class="col-md-12">
+        {{=grid}}
+    </div>
+{{pass}}
+
 
 <!-- Modal -->
 <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -136,9 +147,6 @@
          location.reload();
      });
 
-     $('#resource_coverpag__row > div > div > span').hide();
-
-
      /*Upload resorces*/
      $('#fileupload').fileupload({
         url: '{{=URL("resource", "upload_file")}}',
@@ -147,7 +155,7 @@
         done: function (e, data) {
             var result = JSON.parse(data.result);
             if (result.success){
-                $('<li/>').html($('<a/>',{'class': "alert-sucess"}).html(result.name+' <ico class="glyphicon glyphicon-ok"></ico>')).appendTo('#files');
+                $('<li/>').html($('<a/>',{'class': "alert-sucess", 'href': result.url}).html(result.name+' <ico class="glyphicon glyphicon-ok"></ico>')).appendTo('#files');
             }else{
                 $('<li/>').html($('<a/>',{'class': 'alert-danger', 'title': result.message, 'data-toggle': 'tooltip'}).html(result.name+' <ico class="glyphicon glyphicon-remove"></ico>')).appendTo('#files');
             }

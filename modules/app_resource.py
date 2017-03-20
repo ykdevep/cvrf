@@ -9,8 +9,8 @@ from wand.image import Image
 from pyPdf import PdfFileReader
 from epubzilla.epubzilla import Epub
 
-CONST_IMAGE_WIDTH = 120
-CONST_IMAGE_HEIGTH = 160
+CONST_IMAGE_WIDTH = 210
+CONST_IMAGE_HEIGTH = 260
 CONST_IMAGE_FORMAT = "png"
 
 class resourceMetadata(object):
@@ -172,24 +172,14 @@ class resourceMetadata(object):
 
                 self.epub_info = Epub.from_file(self.resource_path)
                 epub = {'size': size, 'unit': unit, 'mime_type': self.mimeType, 'pages': 0, 'title':self.getTitle(), 'author':self.getAuthors(), 'year': "", 'year_update': "", 'keyword': ""}
-                db = current.db
 
                 for element in self.epub_info.metadata:
-
                     if element.tag.localname == "description":
                         epub["description"] = element.tag.text
                     elif element.tag.localname == "identifier":
                         epub["identifier"] = element.tag.text
                     elif element.tag.localname == "subject":
                         epub["keyword"] = element.tag.text.split(' ')
-                    elif element.tag.localname == "publisher":
-                        query = db(db.publisher.name == str(element.tag.text))
-                        if query.isempty():
-                           id = db.publisher.insert(name=element.tag.text)
-                           epub["publisher"] = id
-                        else:
-                            publisher = query.select().first()
-                            epub["publisher"] = publisher.id
                     elif element.tag.localname == "date":
                         if not epub["year"]:
                             epub["year"] = element.tag.text.split("-")[0]

@@ -133,5 +133,59 @@ input[type=date], input[type=datetime-local], input[type=email], input[type=numb
 
 select.form-control {
     height: 42px;
+}
+
+#w2p_query_panel {
     margin-top: 10px;
+}
+
+.figure-text > .fig-caption-text, .figure-text > img{
+    margin-top: 4px;
+    text-align: center;
+}
+
+.btn-group > a {
+    margin: 0px;
+}
+
+.thumbnail {
+    border: none;
+}
+
+.float-right {
+    position: relative;
+    float: right;
+    margin: 0px;
+}
+
+.padding-list {
+    padding-left: 10px;
+}
+
+.menu-active {
+    background-color: #eee;
+}
+
+.cvrf_search {
+    text-align: right;
+    background-color: #f2f2f2;
+    padding-top: 10px;
+    padding: 5px;
+}
+
+.panel {
+     box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
+}
+
+.panel-header-line {
+    border-top: 1px solid #ddd;
+    border-color: #ddd
+}
+
+.panel-body {
+     padding: 0px;
+}
+
+.container-search {
+     padding-top: 25px;
 }

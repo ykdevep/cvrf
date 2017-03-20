@@ -48,7 +48,7 @@
   </head>
   <body id="{{if request.function == 'admin_table':}}{{=request.args(0)}}{{else:}}{{=request.function}}{{pass}}" data-spy="scroll" data-target="#navbar-repository">
     <!--[if lt IE 8]><p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p><![endif]-->
-    <div class="w2p_flash alert alert-dismissable">{{=response.flash or ''}}</div>
+    <div class="w2p_flash alert" style="opacity: 0.7; ">{{=response.flash or ''}}</div>
     <!-- Navbar ======================================= -->
     <nav class="navbar navbar-default navbar-fixed-top scrolling-navbar" role="navigation">
       <div class="container-fluid">
@@ -72,7 +72,7 @@
         </div>
       </div>
     </nav>
-    <!-- Masthead ===================================== -->    
+    <!-- Masthead ===================================== -->
     {{block header}}
     {{end}}
     <!-- Main ========================================= -->
@@ -127,6 +127,11 @@
     <script src="{{=URL('static','js/bootstrap.min.js')}}"></script>
     <script src="{{=URL('static','js/web2py-bootstrap3.js')}}"></script>
     <script src="{{=URL('static','js/mdb.min.js')}}"></script>
+    <script>
+        $(function(){
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
     {{block page_js}}{{end page_js}}
     <!-- Animations init-->
     <script>

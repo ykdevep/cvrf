@@ -44,20 +44,20 @@ db.define_table('resource',
     Field('pages', 'integer', default=0, readable=False, writable=False, label=T('Pages')),
     Field('downloads', 'integer', default=0, readable=False, writable=False, label=T('Downloads')),
     Field('visits', 'integer', default=0, readable=False, writable=False,  label=T('Visits')),
-    Field('votes_user', 'list:integer', default=[], label=T('Ids user'), writable=False, readable=False),
+    Field('votes_user', 'list:reference auth_user', default=[], label=T('Ids user'), writable=False, readable=False),
     Field('votes', 'integer', writable=False, readable=False, default=[], label=T('Votes'), compute = lambda r: len(r.votes_user)),
     format='%(title)s')
 
 db.resource.resource.requires = [IS_UPLOAD_FILENAME(filename='^(\s|\.|-|\w|á|é|í|ó|ú|ñ|Á|É|Í|Ó|Ú|Ñ){1,40}$', extension='^(pdf|epub|png)$', case=0)]
+db.resource.coverpag.requires = [IS_UPLOAD_FILENAME(filename='^(\s|\.|-|\w|á|é|í|ó|ú|ñ|Á|É|Í|Ó|Ú|Ñ){1,40}$', extension='^(png)$', case=0)]
+db.resource.year.requires = [IS_NOT_EMPTY()]
 db.resource.resource.comment = T("Filename length (40), alphanumeric characters and format (pdf, epub or png)")
-db.resource.coverpag.comment = T("Image format (png) and  (120x160)")
-db.resource.resource.represent = lambda value, register: A(T('Click here for download'), _href=URL('resource', 'downloads', args=[register.id, value]))
+db.resource.coverpag.comment = T("Filename length (40), alphanumeric characters, image format (png) and  (210x260)")
+db.resource.resource.represent = lambda value, register: A(T('Click here for download'), _href=URL('resource', 'download.html', args=[register.id, value]))
 
-db.resource.resource.authorization = lambda registro: auth.is_logged_in()
+db.resource.coverpag.requires = IS_EMPTY_OR(IS_IMAGE(extensions=('png'), maxsize=(210, 260)))
 
-db.resource.coverpag.requires = IS_EMPTY_OR(IS_IMAGE(extensions=('png'), maxsize=(120, 160)))
-
-db.resource.title.requires = [IS_NOT_EMPTY(), IS_NOT_IN_DB(db, 'resource.title')]
+db.resource.title.requires = [IS_NOT_EMPTY()]
 db.resource.description.requires = [IS_NOT_EMPTY()]
 
 db.resource.description.represent = lambda value, register: XML(value)
@@ -68,12 +68,12 @@ db.resource.state.default = lambda : db(db.state).select().first().id or None
 db.resource.rtype.default = lambda : db(db.rtype).select().first().id or None
 db.resource.category.default = lambda : db(db.category).select().first().id or None
 
-subconjunto=db((db.state.name != "Publicado") & (db.state.name != "Rechazado") & (db.state.name != "Aceptado"))
-
 if ("Administrador" in auth.user_groups.values()) or ("Publicador" in auth.user_groups.values()):
     subconjunto=db(db.state.id>0)
 elif ("Revisor" in auth.user_groups.values()):
-    subconjunto=db((db.state.name != "Publicado"))
+    subconjunto=db((db.state.name != "Publicar"))
+else:
+    subconjunto=db((db.state.name != "Publicar") & (db.state.name != "Rechazar") & (db.state.name != "Aceptar"))
 
 db.resource.state.requires = IS_IN_DB(subconjunto, 'state.id', '%(name)s')
 
@@ -89,7 +89,6 @@ def resourceInsertBefore(f):
         coverpage = classResource.coverpage()
         f['coverpag'] = coverpage['coverpag']
         m = classResource.getMetadata()
-
         f['year_update'] = m['year_update']
         f['mime_type'] = m['mime_type']
         f['keyword'] = m['keyword']
@@ -99,7 +98,6 @@ def resourceInsertBefore(f):
         f['unit'] = m['unit']
         f['size'] = m['size']
         f['votes_user'] = [auth.user.id]
-
         if f.has_key('title'):
             if not f['title'] and m['title']:
                 f['title'] = m['title']
@@ -113,33 +111,28 @@ def resourceUpdateBefore(s, f):
     """
     Callback for extract metadata file, create coverpage and update f dict
     """
-    #try:
-    resource = s.select().first()
-
-    if f.has_key('resource'):
-        if f['resource'] != resource.resource:
-
-            classResource = app_resource.resourceMetadata(f['resource'], f['coverpag'])
-            coverpage = classResource.coverpage()
-            f['coverpag'] = coverpage['coverpag']
-            m = classResource.getMetadata()
-            f['year_update'] = m['year_update']
-            f['mime_type'] = m['mime_type']
-            f['keyword'] = m['keyword']
-            f['author'] = m['author']
-            f['year'] = m['year']
-            f['pages'] = m['pages']
-            f['unit'] = m['unit']
-            f['size'] = m['size']
-            f['title'] = m['title']
-
-    return None
-    #except Exception, e:
-    #    return True
+    try:
+        resource = s.select().first()
+        if f.has_key('resource'):
+            if f['resource'] != resource.resource:
+                classResource = app_resource.resourceMetadata(f['resource'])
+                coverpage = classResource.coverpage()
+                f['coverpag'] = coverpage['coverpag']
+                m = classResource.getMetadata()
+                f['year_update'] = m['year_update']
+                f['mime_type'] = m['mime_type']
+                f['keyword'] = m['keyword']
+                f['author'] = m['author']
+                f['year'] = m['year']
+                f['pages'] = m['pages']
+                f['unit'] = m['unit']
+                f['size'] = m['size']
+                f['title'] = m['title']
+        return None
+    except Exception, e:
+        return True
 
 db.resource._before_update.append(lambda s,f: resourceUpdateBefore(s,f))
-db.resource.resource.authorize = lambda record:auth.is_logged_in()
-
 
 db.define_table('review',
    Field('resource', 'reference resource', writable=False, readable=False, label=T("Resource")),
@@ -152,13 +145,3 @@ db.review.note.requires = [IS_NOT_EMPTY()]
 
 db.review._singular = T("Review")
 db.review._plural = T("Revisions")
-
-db.define_table('comment',
-   Field('resource', 'reference resource', writable=False, readable=False, label=T("Resource")),
-   Field('body','text', default=P(T("Enter comment...")), label=T('')),
-   format='%(id)s')
-
-db.comment.created_on.writable=db.comment.created_on.readable=False
-db.comment.created_by.writable=db.comment.created_by.readable=False
-
-db.comment.body.represent = lambda value, register : XML(value, sanitize=True, permitted_tags=['a', 'b', 'blockquote', 'br/', 'i', 'li', 'ol', 'ul', 'p', 'cite', 'code', 'pre'], allowed_attributes={'a':['href', 'title'], 'blockquote':['type']})

@@ -4,7 +4,7 @@
 <br />
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-10">
+        <div class="col-md-12">
             <h1>{{=T("Administrate resource")}}</h1>
             <hr />
         </div>
@@ -41,7 +41,7 @@
  $(document).ready(function() {
 
      /*Visibilidad*/
-     $('#resource_description, #comment_body').summernote({fontNames: ['Arial', 'MyriadPro-Light', 'MyriadPro-Regular'],
+     $('#resource_description).summernote({fontNames: ['Arial', 'MyriadPro-Light', 'MyriadPro-Regular'],
             toolbar: [
             //[groupname, [button list]]
                ['style', ['style', 'bold','italic', 'underline', 'clear']],

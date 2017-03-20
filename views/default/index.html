@@ -80,7 +80,7 @@
                 <!--Card content-->
                 <div class="card-block text-xs-center">
                     <!--Title-->
-                    <a href="{{=URL('resource', 'upload')}}"><h4 class="card-title">{{=T("Contribuir")}}</h4></a>
+                    <a href="{{=URL('resource', 'edites')}}"><h4 class="card-title">{{=T("Contribuir")}}</h4></a>
                     <hr>
                     <!--Text-->
                     <p class="card-text">{{=T("Contribuir al enriquecimiento de nuestro acervo de información forestal")}}</p>
@@ -194,22 +194,16 @@
     <nav class="navbar navbar-counter">
         <div class="container">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <ul>
                         <li><h1 class="wow fadeInUp" data-wow-delay="0.2s">{{=T('Recursos')}}</h1></li>
-                        <li><h2 class="wow fadeInUp" data-wow-delay="0.3s">500</h2></li>
+                        <li><h2 class="wow fadeInUp" data-wow-delay="0.3s" id="resources">0</h2></li>
                     </ul>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <ul>
                         <li><h1 class="wow fadeInUp" data-wow-delay="0.2s">{{=T('Usuarios')}}</h1></li>
-                        <li><h2 class="wow fadeInUp" data-wow-delay="0.3s">500</h2></li>
-                    </ul>
-                </div>
-                <div class="col-md-4">
-                    <ul>
-                        <li><h1 class="wow fadeInUp" data-wow-delay="0.2s">{{=T('Usuarios online')}}</h1></li>
-                        <li><h2 class="wow fadeInUp" data-wow-delay="0.3s">50</h2></li>
+                        <li><h2 class="wow fadeInUp" data-wow-delay="0.3s" id="users">0</h2></li>
                     </ul>
                 </div>
             </div>
@@ -223,7 +217,7 @@
     <div class="row">
         <div class="col-md-4">
             <article>
-                <h3 class="h3-responsive">{{=T("Contact us")}}</h3>
+                <h3 class="h3-responsive wow fadeInUp" data-wow-delay="0.1s">{{=T("Contact us")}}</h3>
                 <ul class="text-xs-center">
                     <li class="wow fadeInUp" data-wow-delay="0.2s">
                         <h3>{{=T('Comunidad Virtual de Recursos Forestales')}}</h3>
@@ -236,14 +230,18 @@
                         <p><ico class="glyphicon glyphicon-phone"></ico> + 01 234 567 89</p>
                     </li>
 
-                    <li class="wow fadeInUp" data-wow-delay="0.5s"><ico class="glyphicon glyphicon-envelope"></ico>
+                    <li class="wow fadeInUp" data-wow-delay="0.5s">
+                        <p><ico class="glyphicon glyphicon-qrcode"></ico> 8989-8989-4454-1234</p>
+                    </li>
+
+                    <li class="wow fadeInUp" data-wow-delay="0.6s"><ico class="glyphicon glyphicon-envelope"></ico>
                         <a href="mailto:cvforestal.upr.edu.cu">cvforestal@upr.edu.cu</a>
                     </li>
                 </ul>
             </article>
         </div>
         <div class="col-md-4">
-            <article class="wow fadeInDown" data-wow-delay="0.3s">
+            <article class="wow fadeInUp" data-wow-delay="0.3s">
                 <h3 class="h3-responsive">{{=T("Privacidad")}}</h3>
                 <ul>
                     <li>{{=A(T('Términos y condiciones'))}}</li>
@@ -252,7 +250,7 @@
             </article>
         </div>
         <div class="col-md-2">
-            <article class="wow fadeInDown" data-wow-delay="0.4s">
+            <article class="wow fadeInUp" data-wow-delay="0.4s">
                 <h3 class="h3-responsive">{{=T("Financiado")}}</h3>
                 <ul>
                     <li><h2>{{=T('Universidad de Pinar del Río')}}</h2></li>
@@ -262,4 +260,28 @@
             </article>
         </div>
     </div>
+{{end}}
+
+{{block page_js}}
+    {{super}}
+    <script>
+        $(function(){
+            // obtiene información en formato JSON desde el servidor
+                $.getJSON("{{=URL('resource', 'get_informations', hmac_key=KEY)}}", {}, function(json) {
+                    if (json.resources && json.users){
+                        $("#resources").text(json.resources);
+                        $("#users").text(json.users);
+                    }
+                });
+            /*Función que permite actualizar la cantidad recursos y usuarios totales de la aplicación cada 5 segundos*/
+            setInterval(function(){
+                $.getJSON("{{=URL('resource', 'get_informations', hmac_key=KEY)}}", {}, function(json) {
+                    if (json.resources && json.users){
+                        $("#resources").text(json.resources);
+                        $("#users").text(json.users);
+                    }
+                });
+            }, 5000);
+        });
+    </script>
 {{end}}

@@ -27,12 +27,11 @@ def paginator(paginate, count):
     Web2py paginator
     """
     try:
-        page = int(current.request.vars.page or 1)-1
+        page = int(current.request.vars.p or 1)-1
     except ValueError:
         page = 0
     def __self_link(name, p):
-        d = dict(current.request.vars, page=p+1)
-        #return A(name, _href=URL('default', 'index.html', args=current.request.args, vars=d))
+        d = dict(current.request.vars, p=p+1)
         return A(name, _href=URL(args=current.request.args, vars=d), cid=current.request.cid)
     paginator = UL()
     if paginate and paginate < count:
@@ -55,3 +54,134 @@ def paginator(paginate, count):
         if page < npages - NPAGES - 1:
             paginator.append(LI(__self_link('>>', npages - 1)))
     return paginator
+
+def getCategory(id, state_id):
+    # busco los datos de los hijos en la db
+    db = current.db
+
+    menus = db(db.category.category == id).select(cache=(current.cache.ram, 60), cacheable=True)
+
+    # declaro una lista Hijo
+    menu_child = []
+    # recorro la tabla de los hijos
+    for menu in menus:
+        menu_other = getCategory(menu.id, state_id)
+
+        q=c=t=y=i=""
+
+        if current.request.vars.q:
+            q=current.request.vars.q
+
+        if current.request.vars.c:
+            c=current.request.vars.c
+
+        if current.request.vars.t:
+            t=current.request.vars.t
+
+        if current.request.vars.y:
+            y=current.request.vars.y
+
+        if current.request.vars.i:
+            i=current.request.vars.i
+
+        attr = None
+
+        if c == str(menu.id) and not attr:
+            attr = "menu-active"
+
+        count_category = db((db.resource.category == menu.id) & (db.resource.state == state_id)).count()
+
+        # añado a la lista hijo cada uno de los registros encontrados
+        menu_child.append(getMenu(menu.id, menu.name, menu.description, q, menu.id, t, y, i, menu_other, attr, count_category))
+
+    return menu_child
+
+def getType(id, state_id):
+    # busco los datos de los hijos en la db
+    db = current.db
+
+    menus = db(db.rtype.id > 0).select(cache=(current.cache.ram, 60), cacheable=True)
+
+    q=c=t=y=i=""
+
+    if current.request.vars.q:
+        q=current.request.vars.q
+
+    if current.request.vars.c:
+        c=current.request.vars.c
+
+    if current.request.vars.t:
+        t=current.request.vars.t
+
+    if current.request.vars.y:
+        y=current.request.vars.y
+    
+    if current.request.vars.i:
+        i=current.request.vars.i
+
+    # declaro una lista Hijo
+    menu_child = []
+    # recorro la tabla de los hijos
+    for menu in menus:
+
+        attr = None
+
+        if t == str(menu.id) and not attr:
+            attr = "menu-active"
+
+        count_type = db((db.resource.rtype == menu.id) & (db.resource.state == state_id)).count()
+
+        # añado a la lista hijo cada uno de los registros encontrados
+        menu_child.append(getMenu(menu.id, menu.name, menu.description, q, c, menu.id, y, i, [], attr, count_type))
+
+    return menu_child
+
+def getYear(id, state_id):
+    # busco los datos de los hijos en la db
+    db = current.db
+
+    menus = db((db.resource.id > 0) & (db.resource.state == state_id)).select(db.resource.year, distinct=True, orderby=~db.resource.year, cache=(current.cache.ram, 60), cacheable=True)
+
+    q=c=t=y=i=""
+
+    if current.request.vars.q:
+        q=current.request.vars.q
+
+    if current.request.vars.c:
+        c=current.request.vars.c
+
+    if current.request.vars.t:
+        t=current.request.vars.t
+
+    if current.request.vars.y:
+        y=current.request.vars.y
+
+    if current.request.vars.i:
+        i=current.request.vars.i
+
+    # declaro una lista Hijo
+    menu_child = []
+    # recorro la tabla de los hijos
+    for menu in menus:
+
+        attr = None
+
+        if y == str(menu.year) and not attr:
+            attr = "menu-active"
+
+        count_type = db((db.resource.year == menu.year) & (db.resource.state == state_id)).count()
+
+        # añado a la lista hijo cada uno de los registros encontrados
+        menu_child.append(getMenu(menu.year, menu.year, None, q, c, t, menu.year, i, [], attr, count_type))
+
+    return menu_child
+
+
+def getMenu(id, name, title, q, c, t, y, i, menu_other, attr, count):
+    """
+    Get menu of formated
+    """
+    get_vars = {"q": q, "c": c, "t": t , "y": y, "i": i}
+    if current.request.p:
+        get_vars = {"q": q, "p": current.request.p, "c": c, "t": t}
+    return [name, False, A(CAT(name, SPAN(count, _class="badge", _style="position: relative; float: right;")), _class=attr, _title=title, _href=URL("resource", "search_component.load", vars=get_vars), cid=current.request.cid,**{'_data-toggle': "tooltip", '_data-placement': "top"}), menu_other]

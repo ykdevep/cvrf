@@ -1,4 +1,0 @@
-<ul class="nav nav-pills">
-    <li class="btn"></li>
-    {{=LI(CAT(XML(SPAN(_class="glyphicon glyphicon-star")), SPAN(votes, _class="badge")), _id="btn-voted")}}
-</ul>

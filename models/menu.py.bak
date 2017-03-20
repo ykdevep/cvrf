@@ -90,7 +90,7 @@ def _():
             other_menu.append(("publisher", False, A(CAT(XML('<ico class="glyphicon glyphicon-edit"></ico> '), T("Publisher")), _href=URL("resource", "admin_table", args =["publisher"]), **{"_data-target": "#publisher"})))
 
         if(auth.has_membership("Publicador")):
-            other_menu.append(("publish", False, A(CAT(XML('<ico class="glyphicon glyphicon-edit"></ico> '), T("To Published")), _href=URL("resource", "publish"), **{"_data-target": "#publish"})))
+            other_menu.append(("publish", False, A(CAT(XML('<ico class="glyphicon glyphicon-leaf"></ico> '), T("To Published")), _href=URL("resource", "publish"), **{"_data-target": "#publish"})))
 
         response.menu += [(T("Resource"),False, URL("default", "dashboard"), other_menu)]
 

@@ -78,6 +78,7 @@ response.form_label_separator = myconf.get('forms.separator') or ''
 # - old style crud actions
 # (more options discussed in gluon/tools.py)
 # -------------------------------------------------------------------------
+session.connect(request, response, db, masterapp=None, separate=True)
 
 from gluon.tools import Auth, Service, PluginManager
 import os
@@ -112,6 +113,7 @@ db.rtype._singular = T("Type")
 db.rtype._plural = T("Types")
 
 auth.settings.extra_fields['auth_user'] = [
+    Field('conected', 'boolean', default=True, writable=False, readable=False, label=T("User conected")),
     Field('photo', 'upload', autodelete=True, uploadseparate=True, uploadfolder=os.path.join(request.folder,'nfs-uploads'), label=T("Photo"), comment=T("Photo of profile")),
     Field('categories_review', 'list:reference category', label=T("Categories review"), comment=T("List the categories")),
     Field('notification', 'boolean', default=True, label=T("Email notification")),
@@ -154,7 +156,7 @@ from gluon import current
 current.auth = auth
 current.db = db
 
-auth.settings.formstyle = 'bootstrap3_stacked'
+auth.settings.formstyle = 'bootstrap3_inline'
 
 #Active directory UPR
 from gluon.contrib.login_methods.ldap_auth import ldap_auth
@@ -209,6 +211,7 @@ db.define_table('website',
     Field('is_enabled', 'boolean', default=False, label=T('Is enabled')),
     Field('paginate', 'integer', default=20, label=T('Search pagination'), comment=T("It was used in the search of resources and users")),
     Field('keywords', 'list:string', label=T("Keywords"), comment=T("Enter some keywords for this website.")),
+    Field('key', 'string', default="SAYASPER23YAS", label=T("Key")),
     Field('contact_email', 'string', requires=IS_NOT_EMPTY(), label=T('Contact email'), comment=T("Webmaster email")),
     Field('request_app', default=request.env.http_host, update= request.env.http_host, writable=False, label=T("Request tenant")),
     format='%(name)s')

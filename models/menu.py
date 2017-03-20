@@ -8,9 +8,10 @@
 response.logo = H5(A(IMG(_src=URL('static', 'img/favicon.png'), _class="logo"),  _class="navbar-brand-name", _href=URL('default', 'index'),
                   _id="index", **{'_data-target': "#index"}))
 
-website = db((db.website.id > 0) & (db.website.is_enabled == True)).select(cache=(cache.ram, 60), cacheable=True).first()
+website = db((db.website.id > 0) & (db.website.is_enabled == True)).select(cache=(cache.ram, 3600), cacheable=True).first()
 
 PAGINATE = 20
+KEY = 'asfkasdfaksfhaksd42faswer1234khasdifyqkfas'
 response.meta.generator = myconf.get('app.generator')
 
 if website:
@@ -24,6 +25,7 @@ if website:
     response.meta.keywords = ' '.join(["%s" % k.upper() for k in website.keywords])
 
     PAGINATE = website.paginate
+    KEY = website.key
 
 else:
 

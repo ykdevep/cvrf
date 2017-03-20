@@ -1,5 +1,5 @@
 <div id="grid" class="col-md-12">
-    {{if resource.state.name == "Revición" or (("Publicador" in auth.user_groups.values()) and (resource.state.name == "Aceptado")):}}
+    {{if (resource.state.name == "Revición") or (("Publicador" in auth.user_groups.values()) and (resource.state.name == "Aceptado")):}}
         {{=form}}
     {{pass}}
 </div>
