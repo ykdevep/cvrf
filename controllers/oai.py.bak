@@ -4,4 +4,4 @@ def index():
     '''
     '''
     resources = db(db.resource.id > 0).select()
-    return dict(message="hello from oai.py", resources=resources)
+    return dict(message="hello from oai.py")
