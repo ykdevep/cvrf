@@ -1,0 +1,140 @@
+{{import datetime}}
+{{from gluon.tools import prettydate}}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+            {{if news:}}
+                {{i=0}}
+                {{for n in news:}}
+
+                    <!--Card-->
+                    <div class="card-search card wow fadeIn" data-wow-delay="{{=i}}s">
+                        <!--Card title-->
+                        <div class="overlay hm-white-slight">
+                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+                                {{=H3(n.title)}}
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                                {{=H4(CAT(T("Created "), prettydate(n.published_on,T), ' ', T("by"), ' ', n.created_by.username), ' ',XML('<icon class="glyphicon glyphicon-eye-open"></icon> '), ' ', SPAN(n.rank, _id=CAT('new-', n.id)))}}
+                            </div>
+                            <!--Text-->
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <hr/>
+                            </div>
+                        </div>
+                        <!--/.Card title-->
+
+                        <!--Card content-->
+                        <div class="card-block text-xs-center">
+                            <div class="collapse" id="{{=CAT('data-', n.id)}}">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    {{if n.image:}}
+                                    <div class="col-xs-8 col-md-6">
+                                        <a class="thumbnail">
+                                          {{=IMG(_src=URL('blog','download', args=[n.image]))}}
+                                        </a>
+                                    </div>
+                                    {{pass}}
+                                    {{=XML(n.text, sanitize=False)}}
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                {{=CAT(P(n.abstract, _id=CAT('abstract-', n.id)), A(CAT(XML('<icon class="glyphicon glyphicon-eye-open"></icon> '), T(" See...")), _class="btn btn-default btn-visit", **{"_data-toggle": "collapse", "_data-visit": "true", "_data-new": n.id,  "_data-target": CAT("#data-", n.id)}))}}
+                            </div>
+                        </div>
+                    </div>
+                    <!--/.Card content-->
+                {{i=i+0.2}}
+                {{pass}}
+
+                <div class="web2py_paginator ykd_paginator">
+                    <nav>
+                        {{=paginator}}
+                    </nav>
+                </div>
+
+            {{else:}}
+                {{=H1(T("Blog not have news"))}}
+            {{pass}}
+        </div>
+
+         <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 blog-sidebar">
+            <div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        {{if form:}}
+                            {{=form}}
+                        {{pass}}
+                    </div>
+
+                    <div class="panel-body">
+                        <ol class="list-unstyled nav">
+                            {{for y in years:}}
+                                {{qyear = y[years_part]}}
+
+                                {{if str(qyear) == request.vars.y:}}
+                                    {{=LI(A(qyear, _class="menu-active", _href=URL("blog", "news.load", args=request.args, vars=dict(y=qyear)), cid=request.cid))}}
+                                {{else:}}
+                                    {{=LI(A(qyear, _href=URL("blog", "news.load", args=request.args, vars=dict(y=qyear)), cid=request.cid))}}
+                                {{pass}}
+                            {{pass}}
+                        </ol>
+                        <ol class="list-unstyled nav">
+                            <li><a href="{{=URL('blog', 'feed.rss')}}">{{=T("Rss")}}</a></li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{{block page_js}}
+    {{super}}
+    <script type="text/javascript">
+        $(function () {
+            /*Función que permite contar visits*/
+            $(".btn-visit").click(function(event){
+                var new_id = $(this).attr('data-new');
+                if ($(this).attr('data-visit') == 'true'){
+                    $(this).attr('data-visit', 'false')
+                    $("#abstract-"+new_id).hide();
+                    $.ajax({
+                        // la URL para la petición
+                        url : "{{=URL('blog', 'visit_component.html', hmac_key=KEY)}}",
+                        // la información a enviar
+                        // (también es posible utilizar una cadena de datos)
+                        data : {new_id: new_id},
+                        // especifica si será una petición POST o GET
+                        type : 'POST',
+                        // el tipo de información que se espera de respuesta
+                        dataType : 'json',
+                        // código a ejecutar si la petición es satisfactoria;
+                        // la respuesta es pasada como argumento a la función
+                        success : function(json) {
+                            if (json.success){
+                                $('#new-'+json.new_id).text(json.visit);
+                            }
+                        },
+                        // código a ejecutar si la petición falla;
+                        // son pasados como argumentos a la función
+                        // el objeto de la petición en crudo y código de estatus de la petición
+                        error : function(xhr, status) {
+                            console.log("Error")
+                        },
+                        // código a ejecutar sin importar si la petición falló o no
+                        complete : function(xhr, status) {
+                            console.log('Petición realizada');
+                        }
+                    });
+                } else {
+                    $(this).attr('data-visit', 'true')
+                    $("#abstract-"+new_id).show();
+                }
+            });
+        });
+    </script>
+{{end}}

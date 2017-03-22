@@ -7,7 +7,7 @@
         <div class="col-md-12">
             <h1>{{=T("Upload multiple files")}}</h1>
             <h3>{{=T("Filename length (40), alphanumeric characters and format (pdf, epub or png)")}}</h3>
-            <br />
+            <hr />
         </div>
     </div>
 </div>
@@ -59,7 +59,7 @@ $(function () {
     });
 
     $("#resource_resource").prop('name', 'files[]');
-    $("#resource_resource").attr('data-url', '{{=URL("resource", "admin_upload_file")}}');
+    $("#resource_resource").attr('data-url', '{{=URL("resource", "admin_upload_file", user_signature=True)}}');
     $("#resource_resource").attr('data-sequential-uploads', false);
     $("#resource_resource").attr('multiple', true);
 

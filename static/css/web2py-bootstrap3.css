@@ -42,15 +42,6 @@ a.carousel-control {
     }
 }
 
-#form-cart .group-cart {
-    padding-left: 65px;
-    margin-top: 10px;
-}
-
-#search.btn-fab-mini, #cart {
-    font-size: 20px;
-    color: #009688;
-}
 span.badge {
     margin-bottom: 20px;
 }
@@ -96,10 +87,10 @@ span.badge {
 
 div.w2p_flash.alert {
     display: none;
-    opacity: 0.8;
+    opacity: 0.9;
     position: fixed;
     top: 65px;
-    right: 10px;
+    right: 15px;
     cursor: pointer;
     z-index: 1000;
     background-color: #009688;
@@ -109,14 +100,14 @@ div.w2p_flash.alert {
 
 div.w2p_flash {
     font-weight: 400;
-    min-width: 240px;
-    max-width: 240px;
+    min-width: 260px;
+    max-width: 260px;
     opacity: 1;
     vertical-align: baseline;
     right: auto;
     border-width: 1px;
     margin: 0 0 20px;
-    padding: 5px 10px 5px 10px;
+    padding: 10px 15px 10px 15px;
 }
 
 div.w2p_flash.alert:hover {

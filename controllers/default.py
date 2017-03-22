@@ -19,6 +19,27 @@ def index():
     response.title = T("Homepage") + response.title
     return dict()
 
+def work_group():
+    '''
+    '''
+    response.title = T("Work group") + response.title
+    response.flash = T("Work group")
+    return dict()
+
+def deveploment_group():
+    '''
+    '''
+    response.title = T("Deveploment group") + response.title
+    response.flash = T("Deveploment group")
+    return dict()
+
+def term_conditions():
+    '''
+    '''
+    response.title = T("Terms and conditions") + response.title
+    response.flash = T("Terms and conditions")
+    return dict()
+
 
 def user():
     """

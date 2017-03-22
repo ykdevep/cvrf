@@ -77,8 +77,13 @@ def _():
             ("scheduler_task", False, A(CAT(XML('<ico class="glyphicon glyphicon-tasks"></ico> '), T("Scheduler Task")), _href=URL("admin", "scheduler_task"), **{"_data-target": "#scheduler_task"})),
             ("rtype", False, A(CAT(XML('<ico class="glyphicon glyphicon-tag"></ico> '), T("Types")), _href=URL("admin", "table", args=["rtype"]), **{"_data-target": "#rtype"})),
             ("language", False, A(CAT(XML('<ico class="glyphicon glyphicon-flag"></ico> '), T("Language")), _href=URL("resource", "admin_table", args=["language"]), **{"_data-target": "#language"})),
-            ]
-            )]
+            ])]
+
+    if(auth.has_membership("Editor")):
+        response.menu += [(T("Edition"),False, URL("default", "dashboard"), [
+            ("admin_news", False, A(CAT(XML('<ico class="glyphicon glyphicon-envelope"></ico> '), T("Administrar noticias")), _href=URL("blog", "admin_news"), **{"_data-target": "#admin_news"})),
+            ("admin_forum", False, A(CAT(XML('<ico class="glyphicon glyphicon-comment"></ico> '), T("Administrar foro")), _href=URL("forum", "admin_forum"), **{"_data-target": "#admin_forum"})),
+            ])]
 
     if(auth.user):
         other_menu = []

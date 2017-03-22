@@ -211,6 +211,7 @@ db.define_table('website',
     Field('is_enabled', 'boolean', default=False, label=T('Is enabled')),
     Field('paginate', 'integer', default=20, label=T('Search pagination'), comment=T("It was used in the search of resources and users")),
     Field('keywords', 'list:string', label=T("Keywords"), comment=T("Enter some keywords for this website.")),
+    Field('key', 'string', default="SAYASPER23YAS", label=T("Key")),
     Field('contact_email', 'string', requires=IS_NOT_EMPTY(), label=T('Contact email'), comment=T("Webmaster email")),
     Field('request_app', default=request.env.http_host, update= request.env.http_host, writable=False, label=T("Request tenant")),
     format='%(name)s')

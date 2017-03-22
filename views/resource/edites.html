@@ -149,7 +149,7 @@
 
      /*Upload resorces*/
      $('#fileupload').fileupload({
-        url: '{{=URL("resource", "upload_file")}}',
+        url: '{{=URL("resource", "upload_file", user_signature=True)}}',
         dataType: 'json',
         acceptFileTypes: /(\.|\/)(pdf|epub|png)$/i,
         done: function (e, data) {

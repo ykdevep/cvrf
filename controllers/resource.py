@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # intente algo como
-@auth.requires_login()
 def search():
     '''
     Buscar recursos
@@ -60,7 +59,6 @@ def search_component():
                 query &= db.resource.id == request.vars.i
 
         limitby = None
-        PAGINATE = 5 #QUITAR
 
         try:
             page = int(request.vars.p or 1)-1
@@ -115,13 +113,13 @@ def __unmatched_resource(ids, state_name):
     '''
     state = db(db.state.name == state_name).select(db.state.id, cache=(cache.ram, 86400), cacheable=True).first()
     for resource in db(db.resource.id.belongs(ids)).select():
-        is_valid = db((db.resource.id != resource.id) & (db.resource.title == resource.title) & (db.resource.year == resource.year)).isempty()
+        is_valid = db((db.resource.id != resource.id) & (resource.id == state.id) & (db.resource.title == resource.title) & (db.resource.year == resource.year)).isempty()
         if is_valid:
             resource.state = state.id
             resource.update_record()
         else:
             state = db(db.state.name == "Rechazar").select(db.state.id, cache=(cache.ram, 86400), cacheable=True).first()
-            db.review.insert(resource=resource.id, note=T('El recurso ha sido rechazado porque ya existe un recurso para este título, año y tipo'), success=False)
+            db.review.insert(resource=resource.id, note=T('El recurso ha sido rechazado porque ya existe un recurso para este título, año y tipo, en este estado'), success=False)
             resource.state = state.id
             resource.update_record()
     return True
@@ -257,12 +255,18 @@ def multiple_downloads():
     out = StringIO()
     files = zipfile.ZipFile(out, mode='w')
 
-    for register in db((db.resource.votes_user.contains(auth.user.id, all=True)) & (db.resource.state == db.state.id) & (db.state.name == "Publicar")).select(db.resource.category, db.resource.title, db.resource.mime_type, db.resource.resource):
+    for register in db((db.resource.votes_user.contains(auth.user.id, all=True)) & (db.resource.state == db.state.id) & (db.state.name == "Publicar")).select(db.resource.category, db.resource.title, db.resource.mime_type, db.resource.resource, db.resource.downloads, db.resource.modified_on, db.resource.id):
         fullpath = app_tools.retrieve_file_properties(register.resource)
         if register.mime_type == "epub+zip":
             files.write(fullpath, register.category.name+"/"+register.title+'.epub')
         else:
             files.write(fullpath, register.category.name+"/"+register.title+'.'+register.mime_type)
+        
+        resource = db.resource(register.id)
+
+        resource.downloads = resource.downloads + 1
+        resource.modified_on = resource.modified_on
+        resource.update_record()
 
     files.close()
     response.headers['Content-Type'] = 'application/zip'
@@ -422,7 +426,7 @@ def admin():
 
     return dict(grid=grid)
 
-@auth.requires_login()
+@auth.requires_signature()
 def upload_file():
     """
     File upload handler for the ajax form of the plugin jquery-file-upload
@@ -448,7 +452,7 @@ def upload_file():
         response.flash= T("Failed uploading file")
         return response.json(json({"name": resource_file.filename, "success": False, "message": str(e)}))
 
-@auth.requires_membership("Administrador")
+@auth.requires_signature()
 def admin_upload_file():
     """
     File upload handler for the ajax form of the plugin jquery-file-upload
@@ -474,11 +478,11 @@ def admin_upload_file():
         response.flash= T("Failed uploading file")
         return response.json(json({False}))
 
-@auth.requires_signature()
 def download_component():
     '''
     Función llamada por ajax que permite actualizar el número de descargas
     '''
+    if not URL.verify(request, hmac_key=KEY): raise HTTP(403)
     import gluon.contrib.simplejson
     if request.ajax:
         resource = db.resource(request.vars.resource)
@@ -495,11 +499,11 @@ def download_component():
         response.headers['web2py-component-flash'] = T("Error en descarga")
         return gluon.contrib.simplejson.dumps({'success': False})
 
-@auth.requires_signature()
 def visit_component():
     '''
     Función llamada por ajax que permite actualizar el número de visitas
     '''
+    if not URL.verify(request, hmac_key=KEY): raise HTTP(403)
     import gluon.contrib.simplejson
     if request.ajax:
         resource = db.resource(request.vars.resource)
@@ -551,11 +555,14 @@ def get_informations():
     import gluon.contrib.simplejson
     if request.ajax:
         state_id = db(db.state.name == "Publicar").select(db.state.id, cache=(cache.ram, 86400)).first()
-        count_resources = db(db.resource.state == state_id).count(cache=(cache.ram, 5000))
-        count_users = db(db.auth_user.id > 0).count(cache=(cache.ram, 5000))
-        return gluon.contrib.simplejson.dumps({'resources': count_resources, 'users': count_users})
+        count_resources = db(db.resource.state == state_id).count(cache=(cache.ram, 5))
+        count_users = db(db.auth_user.id > 0).count(cache=(cache.ram, 5))
+
+        count_downloads = vv = db((db.resource.state == state_id) & (db.resource.downloads > 0)).select(db.resource.downloads.sum(), cache=(cache.ram, 5)).first()[db.resource.downloads.sum()]
+
+        return gluon.contrib.simplejson.dumps({'resources': count_resources, 'users': count_users, 'downloads': count_downloads})
     else:
-        return gluon.contrib.simplejson.dumps({'resources': 0, 'users': 0})
+        return gluon.contrib.simplejson.dumps({'resources': 0, 'users': 0, 'downloads': 0})
 
 
 def title_selection():

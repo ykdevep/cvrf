@@ -5,7 +5,7 @@
         <li>
             <h1 class="h1-responsive wow fadeInDown" data-wow-delay="0.2s">{{=T('Comunidad Virtual de Recursos Forestales')}}</h1></li>
         <li>
-            <h2 class="wow fadeInDown">{{=T("Compartiendo la información forestal")}}</h2>
+            <h2 class="wow fadeInDown">{{=T("Compartimos la información")}}</h2>
         </li>
         <li>
             <a href="#services" class="btn btn-default btn-lg wow fadeInRight" data-wow-delay="0.2s">{{=T("¿Qué necesitas hacer?")}}</a>
@@ -194,16 +194,22 @@
     <nav class="navbar navbar-counter">
         <div class="container">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <ul>
-                        <li><h1 class="wow fadeInUp" data-wow-delay="0.2s">{{=T('Recursos')}}</h1></li>
+                        <li><h1 class="wow fadeInUp" data-wow-delay="0.2s">{{=CAT(XML('<ico class="glyphicon glyphicon-book"></ico>'), ' ', T('Recursos'))}}</h1></li>
                         <li><h2 class="wow fadeInUp" data-wow-delay="0.3s" id="resources">0</h2></li>
                     </ul>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <ul>
-                        <li><h1 class="wow fadeInUp" data-wow-delay="0.2s">{{=T('Usuarios')}}</h1></li>
+                        <li><h1 class="wow fadeInUp" data-wow-delay="0.2s">{{=CAT(XML('<ico class="glyphicon glyphicon-user"></ico>'), ' ', T('Usuarios'))}}</h1></li>
                         <li><h2 class="wow fadeInUp" data-wow-delay="0.3s" id="users">0</h2></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <ul>
+                        <li><h1 class="wow fadeInUp" data-wow-delay="0.2s">{{=CAT(XML('<ico class="glyphicon glyphicon-download"></ico>'), ' ', T('Descargas'))}}</h1></li>
+                        <li><h2 class="wow fadeInUp" data-wow-delay="0.3s" id="downloads">0</h2></li>
                     </ul>
                 </div>
             </div>
@@ -243,9 +249,10 @@
         <div class="col-md-4">
             <article class="wow fadeInUp" data-wow-delay="0.3s">
                 <h3 class="h3-responsive">{{=T("Privacidad")}}</h3>
-                <ul>
-                    <li>{{=A(T('Términos y condiciones'))}}</li>
-                    <li>{{=A(T('Grupo de desarrollo'))}}</li>
+                <ul class="nav">
+                    <li>{{=H4(A(T('Términos y condiciones'), _href=URL('term_conditions')))}}</li>
+                    <li>{{=H4(A(T('Grupo de Trabajo'), _href=URL('work_group')))}}</li>
+                    <li>{{=H4(A(T('Grupo de desarrollo'), _href=URL('deveploment_group')))}}</li>
                 </ul>
             </article>
         </div>
@@ -268,17 +275,27 @@
         $(function(){
             // obtiene información en formato JSON desde el servidor
                 $.getJSON("{{=URL('resource', 'get_informations', hmac_key=KEY)}}", {}, function(json) {
-                    if (json.resources && json.users){
+                    if (json.resources){
                         $("#resources").text(json.resources);
+                    }
+                    if (json.users){
                         $("#users").text(json.users);
                     }
+                    if (json.downloads){
+                        $("#downloads").text(json.downloads);
+                    }
                 });
-            /*Función que permite actualizar la cantidad recursos y usuarios totales de la aplicación cada 5 segundos*/
+            /*Función que permite actualizar la cantidad recursos, descargas y usuarios totales de la aplicación cada 5 segundos*/
             setInterval(function(){
                 $.getJSON("{{=URL('resource', 'get_informations', hmac_key=KEY)}}", {}, function(json) {
-                    if (json.resources && json.users){
+                    if (json.resources){
                         $("#resources").text(json.resources);
+                    }
+                    if (json.users){
                         $("#users").text(json.users);
+                    }
+                    if (json.downloads){
+                        $("#downloads").text(json.downloads);
                     }
                 });
             }, 5000);

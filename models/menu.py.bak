@@ -8,9 +8,10 @@
 response.logo = H5(A(IMG(_src=URL('static', 'img/favicon.png'), _class="logo"),  _class="navbar-brand-name", _href=URL('default', 'index'),
                   _id="index", **{'_data-target': "#index"}))
 
-website = db((db.website.id > 0) & (db.website.is_enabled == True)).select(cache=(cache.ram, 60), cacheable=True).first()
+website = db((db.website.id > 0) & (db.website.is_enabled == True)).select(cache=(cache.ram, 3600), cacheable=True).first()
 
 PAGINATE = 20
+KEY = 'asfkasdfaksfhaksd42faswer1234khasdifyqkfas'
 response.meta.generator = myconf.get('app.generator')
 
 if website:
@@ -24,6 +25,7 @@ if website:
     response.meta.keywords = ' '.join(["%s" % k.upper() for k in website.keywords])
 
     PAGINATE = website.paginate
+    KEY = website.key
 
 else:
 
@@ -75,8 +77,15 @@ def _():
             ("scheduler_task", False, A(CAT(XML('<ico class="glyphicon glyphicon-tasks"></ico> '), T("Scheduler Task")), _href=URL("admin", "scheduler_task"), **{"_data-target": "#scheduler_task"})),
             ("rtype", False, A(CAT(XML('<ico class="glyphicon glyphicon-tag"></ico> '), T("Types")), _href=URL("admin", "table", args=["rtype"]), **{"_data-target": "#rtype"})),
             ("language", False, A(CAT(XML('<ico class="glyphicon glyphicon-flag"></ico> '), T("Language")), _href=URL("resource", "admin_table", args=["language"]), **{"_data-target": "#language"})),
-            ]
-            )]
+            ])]
+
+    if(auth.has_membership("Editor")):
+        response.menu += [(T("Edition"),False, URL("default", "dashboard"), [
+            ("admin_news", False, A(CAT(XML('<ico class="glyphicon glyphicon-envelope"></ico> '), T("Administrar noticias")), _href=URL("blog", "admin_news"), **{"_data-target": "#admin_news"})),
+            ("admin_forum", False, A(CAT(XML('<ico class="glyphicon glyphicon-envelope"></ico> '), T("Administrar foro")), _href=URL("forum", "admin_forum"), **{"_data-target": "#admin_forum"})),
+            ("website", False, A(CAT(XML('<ico class="glyphicon glyphicon-home"></ico> '), T("Website")), _href=URL("admin", "website", ), **{"_data-target": "#website"})),
+            ("admin", False, A(CAT(XML('<ico class="glyphicon glyphicon-book"></ico> '), T("Resources")), _href=URL("resource", "admin"), **{"_data-target": "#admin"})),
+            ])]
 
     if(auth.user):
         other_menu = []

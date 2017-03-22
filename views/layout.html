@@ -46,7 +46,7 @@
     (left_sidebar_enabled and 1 or 0)+(right_sidebar_enabled and 1 or 0)]
     }}
   </head>
-  <body id="{{if request.function == 'admin_table':}}{{=request.args(0)}}{{else:}}{{=request.function}}{{pass}}" data-spy="scroll" data-target="#navbar-repository">
+  <body id="{{if request.function == 'admin_table' or request.function == 'table':}}{{=request.args(0)}}{{else:}}{{=request.function}}{{pass}}" data-spy="scroll" data-target="#navbar-repository">
     <!--[if lt IE 8]><p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p><![endif]-->
     <div class="w2p_flash alert">{{=response.flash or ''}}</div>
     <!-- Navbar ======================================= -->
@@ -74,6 +74,9 @@
     </nav>
     <!-- Masthead ===================================== -->
     {{block header}}
+    {{end}}
+    
+    {{block search}}
     {{end}}
     <!-- Main ========================================= -->
     <!-- Begin page content -->

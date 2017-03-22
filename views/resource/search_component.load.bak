@@ -1,120 +1,127 @@
-<div class="container-fluid container-search">
-    <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
-        <div class="row cvrf_search">
-            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
-                {{=FORM(DIV(INPUT(_type='hidden', _name="c", _value=request.vars.c), INPUT(_type='hidden', _name="t", _value=request.vars.t), INPUT(_type='hidden', _name="y", _value=request.vars.y),INPUT(_type='hidden', _name="cid", _value=request.cid), INPUT(_type='text', _name="q", _value=request.vars.q, _id="title", _autocomplete="off", _class="form-control", _placeholder=T('Buscar recursos en nuestra Base de Datos')), CAT(SPAN(INPUT(_type='submit', _value=T("Search"), _class="btn btn-default"), _class="input-group-btn")),  _class="input-group navbar-fixed-top"), _action=URL('resource', 'search_component.load'), _method='get')}}
-                {{=DIV(UL(_id="sugerencias", _class="typeahead nav"), _class="")}}
-            </div>
+<div class="row" id="search-row">
+    <div class="search-form affix col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+            {{=FORM(DIV(INPUT(_type='hidden', _name="c", _value=request.vars.c), INPUT(_type='hidden', _name="t", _value=request.vars.t), INPUT(_type='hidden', _name="y", _value=request.vars.y),INPUT(_type='hidden', _name="cid", _value=request.cid), INPUT(_type='text', _name="q", _value=request.vars.q, _id="title", _autocomplete="off", _class="form-control", _placeholder=T('Buscar recursos en nuestra Base de Datos')), CAT(SPAN(INPUT(_type='submit', _value=T("Search"), _class="btn btn-default"), _class="input-group-btn")),  _class="input-group"), _action=URL('resource', 'search_component.load'), _method='get')}}
+            {{=DIV(UL(_id="sugerencias", _class="typeahead nav"))}}
+        </div>
 
-            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 col-md-offset-1">
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+            <div class="element-search">
                 {{=A(CAT(T("Clear")), _class="btn btn-default", _href=URL('resource', 'search_component.load'), cid=request.cid)}}
-                {{=CAT(T("Total")," ",count)}}
+                {{=SPAN(CAT(T("Total")," ",count))}}
             </div>
         </div>
+    </div>
+</div>
+<div class="search-content">
+    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
         {{if (resources):}}
 
-                {{i=0}}
-                {{for resource in resources:}}
-                    <div class="row">
-                        <!--Card-->
-                        <div class="card-search card wow fadeIn" data-wow-delay="{{=i}}s">
-                            <!--Card title-->
-                            <div class="overlay hm-white-slight">
-                                <h3>{{=resource.title.upper()}}<a class="btn btn-vote float-right" data-resource="{{=resource.id}}"><ico class="glyphicon glyphicon-thumbs-up"></ico> {{=SPAN(resource.votes, _id=CAT("vote-",resource.id))}}</a></h3>
-                                <!--Text-->
-                                <hr/>
+            {{i=0}}
+            {{for resource in resources:}}
+                <div class="row">
+                    <!--Card-->
+                    <div class="card-search card wow fadeIn" data-wow-delay="{{=i}}s">
+                        <!--Card title-->
+                        <div class="overlay hm-white-slight">
+                            <h3>{{=resource.title.upper()}}
+                                {{if auth.user:}}
+                                    <a class="btn btn-vote float-right" title="{{=T('Vote')}}" data-toggle="tooltip"  data-placement="left" data-resource="{{=resource.id}}"><ico class="glyphicon glyphicon-thumbs-up"></ico> {{=SPAN(resource.votes, _id=CAT("vote-",resource.id))}}</a>
+                                {{else:}}
+                                    <a class="btn float-right" title="{{=T('Login to vote')}}" data-toggle="tooltip"  data-placement="left"><ico class="glyphicon glyphicon-thumbs-up"></ico> {{=SPAN(resource.votes)}}</a>
+                                {{pass}}
+                            </h3>
+                            <!--Text-->
+                            <hr/>
+                        </div>
+                        <!--/.Card title-->
+
+                        <!--Card content-->
+                        <div class="card-block text-xs-center">
+                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                                <figure class="figure figure-text thumbnail">
+
+                                   {{=IMG(_src=URL('resource', 'download',args=resource.coverpag), _class="img-rounded")}}
+
+                                    <figcaption class="figure-caption fig-caption-text">
+                                        {{=A(XML('<ico class="glyphicon glyphicon-download"></ico>'), _title=T('Descargar'), _href=URL('resource', 'download.html', args=[resource.id, resource.resource]), _class='btn btn-success btn-download', **{"_data-toggle" : "tooltip", "_data-placement": "right", "_data-resource": resource.id})}}
+                                    </figcaption>
+                                </figure>
                             </div>
-                            <!--/.Card title-->
 
-                            <!--Card content-->
-                            <div class="card-block text-xs-center">
-                                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                    <figure class="figure figure-text thumbnail">
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <ul class="nav">
+                                    {{if resource.author:}}
+                                        {{=LI(H4(CAT(T("By:"), ' ')+', '.join(["%s" % k.upper() for k in resource.author])))}}
+                                    {{pass}}
 
-                                       {{=IMG(_src=URL('resource', 'download',args=resource.coverpag), _class="img-rounded")}}
+                                    {{if resource.publisher:}}
+                                        {{=LI(H4(CAT(T("Publisher:"), ' ', resource.publisher.name.upper())))}}
+                                    {{pass}}
 
-                                        <figcaption class="figure-caption fig-caption-text">
-                                            {{=A(XML('<ico class="glyphicon glyphicon-download"></ico>'), _title=T('Descargar'), _href=URL('resource', 'download.html', args=[resource.id, resource.resource]), _class='btn btn-success btn-download', **{"_data-toggle" : "tooltip", "_data-placement": "right", "_data-resource": resource.id})}}
-                                        </figcaption>
-                                    </figure>
-                                </div>
+                                    {{=LI(H4(str("%.2f" % round(resource.size,2))+" "+str(resource.unit)))}}
 
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    {{if resource.keyword:}}
+                                        {{=LI(H4(CAT(T("Keywords:"), ' ')+', '.join(["%s" % k.upper() for k in resource.keyword])))}}
+                                    {{pass}}
+
+                                    {{if resource.year:}}
+                                        {{=LI(H4(CAT(T("Year:"), ' ',resource.year)))}}
+                                    {{pass}}
+                                </ul>
+
+                                <a class="btn-search btn-visit" data-toggle="collapse" data-visit="true" data-resource="{{=resource.id}}" data-target="#data-{{=resource.id}}">{{=T("See More")}}</a>
+
+                                <div id="data-{{=resource.id}}" class="collapse">
                                     <ul class="nav">
-                                        {{if resource.author:}}
-                                            {{=LI(H4(CAT(T("By:"), ' ')+', '.join(["%s" % k.upper() for k in resource.author])))}}
+                                        {{=LI(XML(resource.description))}}
+
+                                        {{if resource.rtype:}}
+                                            {{=LI(H4(CAT(T("Type:"),' ', resource.rtype.name)))}}
                                         {{pass}}
 
-                                        {{if resource.publisher:}}
-                                            {{=LI(H4(CAT(T("Publisher:"), ' ', resource.publisher.name.upper())))}}
+                                        {{if resource.created_by:}}
+                                            {{=LI(H4(CAT(T("Uploaded by:"),' ', resource.created_by.username)))}}
                                         {{pass}}
 
-                                        {{=LI(H4(str("%.2f" % round(resource.size,2))+" "+str(resource.unit)))}}
-
-                                        {{if resource.keyword:}}
-                                            {{=LI(H4(CAT(T("Keywords:"), ' ')+', '.join(["%s" % k.upper() for k in resource.keyword])))}}
+                                        {{if resource.category:}}
+                                            {{=LI(H4(CAT(T("Category:"),' ', resource.category.name)))}}
                                         {{pass}}
 
-                                        {{if resource.year:}}
-                                            {{=LI(H4(CAT(T("Year:"), ' ',resource.year)))}}
+                                        {{=LI(H4(CAT(T("Visits:"),' ', SPAN(resource.visits, _id=CAT("visit-",resource.id)))))}}
+
+                                        {{=LI(H4(CAT(T("Downloads:"),' ', SPAN(resource.downloads, _id=CAT("download-",resource.id)))))}}
+
+                                        {{if resource.mime_type:}}
+                                            {{=LI(H4(CAT(T("Extention:"),' ', resource.mime_type)))}}
                                         {{pass}}
+
                                     </ul>
-
-                                    <a class="btn-search btn-visit" data-toggle="collapse" data-visit="true" data-resource="{{=resource.id}}" data-target="#data-{{=resource.id}}">{{=T("See More")}}</a>
-
-                                    <div id="data-{{=resource.id}}" class="collapse" >
-                                        <ul class="nav">
-                                            {{=LI(XML(resource.description))}}
-
-                                            {{if resource.rtype:}}
-                                                {{=LI(H4(CAT(T("Type:"),' ', resource.rtype.name)))}}
-                                            {{pass}}
-
-                                            {{if resource.created_by:}}
-                                                {{=LI(H4(CAT(T("Uploaded by:"),' ', resource.created_by.username)))}}
-                                            {{pass}}
-
-                                            {{if resource.category:}}
-                                                {{=LI(H4(CAT(T("Category:"),' ', resource.category.name)))}}
-                                            {{pass}}
-
-                                            {{=LI(H4(CAT(T("Visits:"),' ', SPAN(resource.visits, _id=CAT("visit-",resource.id)))))}}
-
-                                            {{=LI(H4(CAT(T("Downloads:"),' ', SPAN(resource.downloads, _id=CAT("download-",resource.id)))))}}
-
-                                            {{if resource.mime_type:}}
-                                                {{=LI(H4(CAT(T("Extention:"),' ', resource.mime_type)))}}
-                                            {{pass}}
-
-                                        </ul>
-                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <!--/.Card content-->
                     </div>
-                    {{i=i+0.2}}
+                    <!--/.Card content-->
+                </div>
+                {{i=i+0.2}}
 
-                {{pass}}
+            {{pass}}
 
-                {{if count>paginate:}}
-                    <div class="row">
-                        <div class="web2py_paginator col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            {{=paginator}}
-                        </div>
+            {{if count>paginate:}}
+                <div class="row">
+                    <div class="web2py_paginator col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        {{=paginator}}
                     </div>
-                {{pass}}
+                </div>
+            {{pass}}
 
-        {{else:}}
-            {{=DIV(H1(T("No records found")), _class="col-lg-12 col-md-12 col-sm-12 col-xs-12")}}
-        {{pass}}
-
-        <br/>
-
+    {{else:}}
+        {{=DIV(H1(T("No records found")), _class="col-lg-12 col-md-12 col-sm-12 col-xs-12")}}
+    {{pass}}
+    <br/>
     </div>
-
-    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-        <div class="panel panel-default">
+    <div class="col-lg-3 col-md-3 col-sm-11 col-xs-11 col-lg-offset-0 col-md-offset-0 col-sm-offset-1 col-xs-offset-1">
+        <div class="panel panel-default affix">
             <div class="panel-heading">
               {{=H2(T("Todas las categorías"), _class="panel-title")}}
             </div>
@@ -144,7 +151,8 @@
             $("#sugerencias").hide();
 
             $("#title").keyup(function(){
-                if ($(this).val()){
+                $("#sugerencias").hide();
+                if (($(this).val()).length % 2 == 0){
                     $("#sugerencias").show();
                 } else {
                     $("#sugerencias").hide();
@@ -155,10 +163,10 @@
             $('[data-toggle="tooltip"]').tooltip();
 
             /*Función que permite contar descargas*/
-            $('.btn-download').click(function(event){
+            $(".btn-download").click(function(event){
                 $.ajax({
                     // la URL para la petición
-                    url : "{{=URL('resource', 'download_component.html', user_signature=True)}}",
+                    url : "{{=URL('resource', 'download_component.html', hmac_key=KEY)}}",
                     // la información a enviar
                     // (también es posible utilizar una cadena de datos)
                     data : {resource: $(this).attr('data-resource')},
@@ -186,45 +194,47 @@
                 });
             });
 
-            /*Función que permite votar un recurso*/
-            $('.btn-vote').click(function(event){
-                $.ajax({
-                    // la URL para la petición
-                    url : "{{=URL('resource', 'like_component.html', user_signature=True)}}",
-                    // la información a enviar
-                    // (también es posible utilizar una cadena de datos)
-                    data : {resource: $(this).attr('data-resource')},
-                    // especifica si será una petición POST o GET
-                    type : 'POST',
-                    // el tipo de información que se espera de respuesta
-                    dataType : 'json',
-                    // código a ejecutar si la petición es satisfactoria;
-                    // la respuesta es pasada como argumento a la función
-                    success : function(json) {
-                        if (json.success){
-                            $('#vote-'+json.resource).text(json.votes);
+            {{if auth.user:}}
+                /*Función que permite votar un recurso*/
+                $(".btn-vote").click(function(event){
+                    $.ajax({
+                        // la URL para la petición
+                        url : "{{=URL('resource', 'like_component.html', user_signature=True)}}",
+                        // la información a enviar
+                        // (también es posible utilizar una cadena de datos)
+                        data : {resource: $(this).attr('data-resource')},
+                        // especifica si será una petición POST o GET
+                        type : 'POST',
+                        // el tipo de información que se espera de respuesta
+                        dataType : 'json',
+                        // código a ejecutar si la petición es satisfactoria;
+                        // la respuesta es pasada como argumento a la función
+                        success : function(json) {
+                            if (json.success){
+                                $('#vote-'+json.resource).text(json.votes);
+                            }
+                        },
+                        // código a ejecutar si la petición falla;
+                        // son pasados como argumentos a la función
+                        // el objeto de la petición en crudo y código de estatus de la petición
+                        error : function(xhr, status) {
+                            console.log("Error")
+                        },
+                        // código a ejecutar sin importar si la petición falló o no
+                        complete : function(xhr, status) {
+                            console.log('Petición realizada');
                         }
-                    },
-                    // código a ejecutar si la petición falla;
-                    // son pasados como argumentos a la función
-                    // el objeto de la petición en crudo y código de estatus de la petición
-                    error : function(xhr, status) {
-                        console.log("Error")
-                    },
-                    // código a ejecutar sin importar si la petición falló o no
-                    complete : function(xhr, status) {
-                        console.log('Petición realizada');
-                    }
+                    });
                 });
-            });
+            {{pass}}
 
             /*Función que permite contar visits*/
-            $('.btn-visit').click(function(event){
+            $(".btn-visit").click(function(event){
                 if ($(this).attr('data-visit') == 'true'){
                     $(this).attr('data-visit', 'false')
                     $.ajax({
                         // la URL para la petición
-                        url : "{{=URL('resource', 'visit_component.html', user_signature=True)}}",
+                        url : "{{=URL('resource', 'visit_component.html', hmac_key=KEY)}}",
                         // la información a enviar
                         // (también es posible utilizar una cadena de datos)
                         data : {resource: $(this).attr('data-resource')},

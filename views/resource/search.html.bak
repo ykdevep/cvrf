@@ -1,7 +1,6 @@
 {{extend 'layout.html'}}
 
 {{loader = DIV(DIV(DIV(IMG(_src=URL("static","img/loader.gif"), _width="30%"), _class="col-md-5 col-md-offset-5"), _class="row"), _class="container")}}
-
 {{=LOAD("resource", "search_component.load", args=request.args, vars=request.vars, ajax=True, content=loader, user_signature=True)}}
 
 {{block header}}
@@ -11,7 +10,7 @@
         #sugerencias {
             position: fixed;
             z-index: 1030;
-            width: 48%;
+            width: 47%;
         }
         #sugerencias {
             background: #ddd;
@@ -49,7 +48,7 @@
             background-color: #eee;
         }
 
-        .cvrf_search {
+        .search-form {
             text-align: right;
             background-color: #f2f2f2;
             padding-top: 10px;
@@ -74,13 +73,31 @@
              padding: 0px;
         }
 
-        .container-search {
-             padding-top: 25px;
+        .search-content {
+             padding-top: 92px;
         }
 
         .card-search {
             padding: 5px;
             margin: 5px;
+        }
+
+        .search-form:hover, .search-form:focus {
+            padding-top: 30px;
+            -webkit-transition: padding-top .6s;
+            -moz-transition: padding-top .6s;
+            transition: padding-top .6s;
+        }
+
+        .search-form {
+            padding-top: 20px;
+            -webkit-transition: padding-top .6s;
+            -moz-transition: padding-top .6s;
+            transition: padding-top .6s;
+        }
+
+        #title:focus {
+            padding-top: 5px;
         }
 
     </style>

@@ -19,6 +19,27 @@ def index():
     response.title = T("Homepage") + response.title
     return dict()
 
+def work_group():
+    '''
+    '''
+    response.title = T("Work group") + response.title
+    response.flash = T("Work group")
+    return dict()
+
+def deveploment_group():
+    '''
+    '''
+    response.title = T("Deveploment group") + response.title
+    response.flash = T("Dashboard")
+    return dict()
+
+def term_conditions():
+    '''
+    '''
+    response.title = T("Terms and conditions") + response.title
+    response.flash = T("Terms and conditions")
+    return dict()
+
 
 def user():
     """
@@ -36,7 +57,8 @@ def user():
     to decorate functions that need access control
     also notice there is http://..../[app]/appadmin/manage/auth to allow administrator to manage users
     """
-    response.title = T(request.args(0).capitalize())+response.title
+    if request.args(0):
+        response.title = T(request.args(0).capitalize())+response.title
     return dict(form=auth())
 
 @auth.requires_login()

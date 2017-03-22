@@ -71,6 +71,7 @@ def table():
     if heading:
         heading[0].append(INPUT(_type='checkbox', _onclick="$('input[type=checkbox]').each(function(k){$(this).attr('checked', 'checked');});"))
 
+    response.title = T(table.replace("_", " ")) + response.title
     response.flash = T(table.replace("_", " "))
     return dict(grid=grid)
 

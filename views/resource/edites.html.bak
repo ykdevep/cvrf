@@ -30,7 +30,7 @@
     </div>
 
     <div id="grid" class="col-md-6">
-        {{=LOAD('resource','review.load', args=request.args(-1), ajax=True)}}
+        {{=LOAD('resource','review.load', args=request.args(-1), ajax=True, user_signature=True)}}
     </div>
 {{else:}}
     <div id="grid" class="col-md-12">
