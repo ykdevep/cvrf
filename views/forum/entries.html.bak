@@ -1,0 +1,79 @@
+{{extend 'layout.html'}}
+
+{{block header}}
+<br />
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>{{=T("Forum")}}</h1>
+            <hr />
+        </div>
+    </div>
+</div>
+{{end}}
+
+{{from gluon.tools import prettydate}}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+            {{if entries:}}
+                <table class="table">
+                <tr class="ykd-color">
+                    <td>{{=H4(B(T("Forum")))}}</td>
+                    <td>{{=H4(B(T("State")))}}</td>
+                    <td>{{=H4(B(T("Posts")))}}</td>
+                    <td>{{=H4(B(T("Last Post")))}}</td>
+                    <td>{{=H4(B(T("Comments")))}}</td>
+                </tr>
+                {{for entry in entries:}}
+                    <tr>
+                        <td>
+                            {{=A(H2(entry.title.capitalize()), _href=URL("forum", "comments.load", args=[entry.id]), cid=request.cid, **{'_data-toggle':"popover" ,'_data-trigger':"hover", '_data-placement':"top" ,'_title': T("Description"), '_data-content': entry.description})}}
+                            <h4>{{=CAT(T("Created"), ' ', prettydate(entry.created_on,T), ' ', T("by"), ' ', entry.created_by.username)}}</h4>
+                        </td>
+                        <td>
+                            {{if entry.is_enabled:}}
+                                <h2>
+                                    <span class="label label-info">{{=T("Opened")}}</span>
+                                </h2>
+                            {{else:}}
+                                <h2>
+                                   <span class="label label-warning">{{=T("Closed")}}</span>
+                                </h2>
+                            {{pass}}
+                        </td>
+                        <td>
+                            <h1>{{=LOAD("forum", "comment_count.load", args=[entry.id])}}</h1>
+                        </td>
+                        <td>
+
+                        <h2>{{=CAT(T("Last activity"), ' ',prettydate(entry.modified_on,T), ' ', T("by"), ' ', entry.modified_by.username)}}</h2>
+                        </td>
+                        <td>
+                            {{=CAT(A(CAT(XML('<icon class="glyphicon glyphicon-comment"></icon>'), ' ', T("Show")), _class="btn btn-default", _href=URL("forum", "comments.load", args=[entry.id], vars=request.vars), cid=request.cid))}}
+                        </td>
+                </tr>
+                {{pass}}
+            </table>
+            </div>
+            <div class="col-md-12 web2py_paginator">
+                {{=paginator}}
+            </div>
+
+            {{else:}}
+                {{=H1(T("Foro not have entries"))}}
+            {{pass}}
+        </div>
+    </div>
+</div>
+
+{{block page_js}}
+  {{super}}
+<script>
+  $(function () {
+      $('[data-toggle="popover"]').popover();
+  });
+</script>
+{{end}}

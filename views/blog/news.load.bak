@@ -12,10 +12,10 @@
                     <div class="card-search card wow fadeIn" data-wow-delay="{{=i}}s">
                         <!--Card title-->
                         <div class="overlay hm-white-slight">
-                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+                            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
                                 {{=H3(n.title)}}
                             </div>
-                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
                                 {{=H4(CAT(T("Created "), prettydate(n.published_on,T), ' ', T("by"), ' ', n.created_by.username), ' ',XML('<icon class="glyphicon glyphicon-eye-open"></icon> '), ' ', SPAN(n.rank, _id=CAT('new-', n.id)))}}
                             </div>
                             <!--Text-->
@@ -27,12 +27,15 @@
 
                         <!--Card content-->
                         <div class="card-block text-xs-center">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                {{=P(n.abstract)}}
+                            </div>
                             <div class="collapse" id="{{=CAT('data-', n.id)}}">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     {{if n.image:}}
                                     <div class="col-xs-8 col-md-6">
                                         <a class="thumbnail">
-                                          {{=IMG(_src=URL('default','download', args=[n.image]))}}
+                                          {{=IMG(_src=URL('blog','download', args=[n.image]))}}
                                         </a>
                                     </div>
                                     {{pass}}
@@ -40,7 +43,7 @@
                                 </div>
                             </div>
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                {{=CAT(P(n.abstract, _id=CAT('abstract-', n.id)), A(CAT(XML('<icon class="glyphicon glyphicon-eye-open"></icon> '), T(" See...")), _class="btn btn-default btn-visit", **{"_data-toggle": "collapse", "_data-visit": "true", "_data-new": n.id,  "_data-target": CAT("#data-", n.id)}))}}
+                                {{=A(CAT(XML('<icon class="glyphicon glyphicon-eye-open"></icon> '), T(" See...")), _class="btn btn-default btn-visit", **{"_data-toggle": "collapse", "_data-visit": "true", "_data-new": n.id,  "_data-target": CAT("#data-", n.id)})}}
                             </div>
                         </div>
                     </div>
@@ -98,16 +101,14 @@
         $(function () {
             /*Función que permite contar visits*/
             $(".btn-visit").click(function(event){
-                var new_id = $(this).attr('data-new');
                 if ($(this).attr('data-visit') == 'true'){
                     $(this).attr('data-visit', 'false')
-                    $("#abstract-"+new_id).hide();
                     $.ajax({
                         // la URL para la petición
                         url : "{{=URL('blog', 'visit_component.html', hmac_key=KEY)}}",
                         // la información a enviar
                         // (también es posible utilizar una cadena de datos)
-                        data : {new_id: new_id},
+                        data : {new_id: $(this).attr('data-new')},
                         // especifica si será una petición POST o GET
                         type : 'POST',
                         // el tipo de información que se espera de respuesta
@@ -132,7 +133,6 @@
                     });
                 } else {
                     $(this).attr('data-visit', 'true')
-                    $("#abstract-"+new_id).show();
                 }
             });
         });

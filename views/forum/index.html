@@ -1,0 +1,21 @@
+{{extend 'layout.html'}}
+
+{{block header}}
+<br />
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>{{=T("Forum")}}</h1>
+            <hr />
+        </div>
+    </div>
+</div>
+{{end}}
+
+{{loader = DIV(DIV(DIV(IMG(_src=URL("static","img/loader.gif"), _width="30%"), _class="col-md-5 col-md-offset-5"), _class="row"), _class="container")}}
+
+{{if "comments" in request.args:}}
+    {{=LOAD("forum", "comments.load", args=request.args, vars=request.vars, ajax=True, content=loader, user_signature=True)}}
+{{else:}}
+    {{=LOAD("forum", "entries.load", args=request.args, vars=request.vars, ajax=True, content=loader, user_signature=True)}}
+{{pass}}

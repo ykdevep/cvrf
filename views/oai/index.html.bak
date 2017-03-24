@@ -1,0 +1,34 @@
+{{extend 'layout.html'}}
+
+{{block header}}
+<br />
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>{{=T("Agregar Revista para recolectar metadatos")}}</h1>
+            <hr />
+        </div>
+    </div>
+</div>
+{{end}}
+
+
+{{=form}}
+
+{{block page_js}}
+{{super}}
+    <script>
+        $(function(){
+           if($('#rtype_oai').prop('checked'))
+               $('#rtype_oai__row, #rtype_url__row').show();
+           else
+               $('#auth_user_categories__row, #auth_user_types__row').hide();
+           $('#rtype_oai').change(function(){
+                if($('#rtype_oai').prop('checked'))
+                    $('#type_oai__row, #rtype_url__row').show();
+                else
+                    $('#type_oai__row, #rtype_url__row').hide();
+           });
+       });
+    </script>
+{{end}}

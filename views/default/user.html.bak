@@ -41,7 +41,10 @@ jQuery("#web2py_user_form input:visible:enabled:first").focus();
 {{if request.args(0) == 'register' or request.args(0) == 'profile':}}
     <script>
         $(document).ready(function(){
-           $('#contribuyente_nombre_esposa__row').hide();
+           if($('#auth_user_notification').prop('checked'))
+               $('#auth_user_categories__row, #auth_user_types__row').show();
+           else
+               $('#auth_user_categories__row, #auth_user_types__row').hide();
            $('#auth_user_notification').change(function(){
                 if($('#auth_user_notification').prop('checked'))
                     $('#auth_user_categories__row, #auth_user_types__row').show();

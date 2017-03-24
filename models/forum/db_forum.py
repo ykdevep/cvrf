@@ -12,7 +12,7 @@ db.forum._singular = T("Forum")
 db.forum._plural = T("Forums")
 
 db.define_table('forum_comment',
-   Field('text','text', default=P(T("Enter comment...")), label=""),
+   Field('text','text', default=T("Enter comment..."), label=""),
    Field('forum', 'reference forum', readable=False, writable=False),
    Field('forum_comment', 'reference forum_comment', readable=False, writable=False),
    format='%(id)s')

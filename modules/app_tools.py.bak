@@ -183,5 +183,5 @@ def getMenu(id, name, title, q, c, t, y, i, menu_other, attr, count):
     """
     get_vars = {"q": q, "c": c, "t": t , "y": y, "i": i}
     if current.request.p:
-        get_vars = {"q": q, "p": current.request.p, "c": c, "t": t}
+        get_vars = {"q": q, "p": current.request.p, "c": c, "t": t, "i": i}
     return [name, False, A(CAT(name, SPAN(count, _class="badge", _style="position: relative; float: right;")), _class=attr, _title=title, _href=URL("resource", "search_component.load", vars=get_vars), cid=current.request.cid,**{'_data-toggle': "tooltip", '_data-placement': "top"}), menu_other]

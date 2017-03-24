@@ -152,7 +152,7 @@
 
             $("#title").keyup(function(){
                 $("#sugerencias").hide();
-                if (($(this).val()).length % 2 == 0){
+                if (($(this).val()).length > 0){
                     $("#sugerencias").show();
                 } else {
                     $("#sugerencias").hide();

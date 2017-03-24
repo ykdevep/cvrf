@@ -1,0 +1,99 @@
+{{if entry:}}
+
+    {{from gluon.tools import prettydate}}
+
+    <div class="container-fluid">
+            <div class="row">
+                 <div class="col-md-2">
+                    {{=A(CAT(XML('<icon class="glyphicon glyphicon-arrow-left"></icon>'),T(" Back")), _class="btn btn-info", _href=URL("forum", "entries.load", args=request.args, vars=request.vars), cid=request.cid)}}
+                     {{=A(CAT(XML('<icon class="glyphicon glyphicon-comment"></icon>'), ' ', count), _class="btn btn-info", _href=URL("forum", "comments.load", args=request.args, vars=request.vars), cid=request.cid, **{'_data-toggle':"tooltip", '_data-placement':"right", '_title': T("Update")})}}
+                </div>
+
+                <div class="col-md-8">
+                    {{=H2(entry.title.capitalize())}}
+                    {{=H4(entry.description)}}
+                </div>
+                <div class="col-md-1 col-md-offset-1">
+                    <h1>{{if entry.is_enabled:}}<span class="label label-warning">{{=T("Opened")}}</span>{{else:}}<span class="label label-warning">{{=T("Closed")}}</span>{{pass}}</h1>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="web2py_paginator">
+                        <nav>
+                            {{=paginator}}
+                        </nav>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <hr />
+                    {{i=0}}
+                    {{for comment in comments:}}
+                        <!--Card-->
+                        <div class="card-search card wow {{if i % 2 == 0:}}fadeInLeft{{else:}}fadeInRight{{pass}}" data-wow-delay="{{=i/(i+1)}}s">
+                            <!--Card title-->
+                            <div class="overlay hm-white-slight">
+                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                    {{if comment.created_by.photo:}}
+                                        {{=CAT(IMG(_src=URL("default", "download", args=[comment.created_by.photo]), _width="40px"), XML('<ico class="glyphicon glyphicon-comment"></ico>'))}}
+                                    {{pass}}
+
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                    {{=T("Created ")+prettydate(comment.created_on,T)+T(" by ")}}{{=CAT(comment.created_by.username)}}
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <hr />
+                                </div>
+                                <!--Text-->
+                            </div>
+                            <!--/.Card title-->
+
+                            <!--Card content-->
+                            <div class="card-block text-xs-center">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <p><span class="comentario_cuerpo">{{=XML(comment.text, sanitize=False)}}</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <!--/.Card content-->
+                    {{i=i+1}}
+                    {{pass}}
+
+                    {{if entry.is_enabled:}}
+                        {{if(auth.user!=None):}}
+                            <div class="col-md-12">
+                                <hr />
+                            </div>
+                            <div class="col-md-8">
+                                {{=form}}
+                            </div>
+                        {{else:}}
+                            {{=A(CAT(T("Login to comment")," ",XML('<ico class="glyphicon glyphicon-comment"></ico> ')),_href=URL('default', 'user.html', args="login", vars={"_next": URL('forum', 'index.html', args=request.args, vars=request.vars)}), _class="btn")}}
+                        {{pass}}
+                    {{pass}}
+                </div>
+                <div class="col-md-12">
+                    <div class="web2py_paginator">
+                        <nav>
+                            {{=paginator}}
+                        </nav>
+                    </div>
+                </div>
+        </div>
+    </div>
+{{else:}}
+    <h1>{{=T("Error entry not found")}}</h1>
+{{pass}}
+
+{{block page_js}}
+  {{super}}
+    <script>
+     $(function() {
+         $('[data-toggle="popover"]').popover();
+         $('[data-toggle="tooltip"]').tooltip();
+         $('#forum_comment_text').attr('rows', 5);
+     });
+    </script>
+{{end page_js}}

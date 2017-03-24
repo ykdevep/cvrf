@@ -121,7 +121,7 @@
     <br/>
     </div>
     <div class="col-lg-3 col-md-3 col-sm-11 col-xs-11 col-lg-offset-0 col-md-offset-0 col-sm-offset-1 col-xs-offset-1">
-        <div class="panel panel-default affix">
+        <div class="panel panel-default">
             <div class="panel-heading">
               {{=H2(T("Todas las categorías"), _class="panel-title")}}
             </div>

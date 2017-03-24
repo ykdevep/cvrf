@@ -61,13 +61,13 @@ response.form_label_separator = myconf.get('forms.separator') or ''
 # -------------------------------------------------------------------------
 # (optional) optimize handling of static files
 # -------------------------------------------------------------------------
-#response.optimize_css = 'concat,minify,inline'
-#response.optimize_js = 'concat,minify,inline'
+response.optimize_css = 'concat,minify,inline'
+response.optimize_js = 'concat,minify,inline'
 
 # -------------------------------------------------------------------------
 # (optional) static assets folder versioning
 # -------------------------------------------------------------------------
-# response.static_version = '0.0.0'
+response.static_version = '0.0.1'
 
 # -------------------------------------------------------------------------
 # Here is sample code if you need for
@@ -105,8 +105,10 @@ db.category._singular = T("Category")
 db.category._plural = T("Categories")
 
 db.define_table('rtype',
-    Field('name', 'string', length=50, requires=IS_NOT_EMPTY(), label=T('Type'), comment=T("Type name")),
+    Field('name', 'string', length=50, requires=IS_NOT_EMPTY(), label=T('Name'), comment=T("Name of type")),
     Field('description', 'text', label=T('Description')),
+    Field('oai', 'boolean', default=True, label=T('OAI type')),
+    Field('url', 'string', requires=IS_EMPTY_OR(IS_URL()), label=T('Url to harvester')),
     format='%(name)s')
 
 db.rtype._singular = T("Type")
@@ -209,7 +211,7 @@ db.define_table('website',
     Field('intitution', 'string', length=250, requires=IS_NOT_EMPTY(), label=T('Intitution')),
     Field('description', 'text', requires=IS_NOT_EMPTY(), label=T('Description')),
     Field('is_enabled', 'boolean', default=False, label=T('Is enabled')),
-    Field('paginate', 'integer', default=20, label=T('Search pagination'), comment=T("It was used in the search of resources and users")),
+    Field('paginate', 'integer', default=20, label=T('Pagination'), comment=T("It was used in resources, users and news searched")),
     Field('keywords', 'list:string', label=T("Keywords"), comment=T("Enter some keywords for this website.")),
     Field('key', 'string', default="SAYASPER23YAS", label=T("Key")),
     Field('contact_email', 'string', requires=IS_NOT_EMPTY(), label=T('Contact email'), comment=T("Webmaster email")),

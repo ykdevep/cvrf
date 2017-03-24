@@ -61,13 +61,13 @@ response.form_label_separator = myconf.get('forms.separator') or ''
 # -------------------------------------------------------------------------
 # (optional) optimize handling of static files
 # -------------------------------------------------------------------------
-#response.optimize_css = 'concat,minify,inline'
-#response.optimize_js = 'concat,minify,inline'
+response.optimize_css = 'concat,minify,inline'
+response.optimize_js = 'concat,minify,inline'
 
 # -------------------------------------------------------------------------
 # (optional) static assets folder versioning
 # -------------------------------------------------------------------------
-# response.static_version = '0.0.0'
+response.static_version = '0.0.1'
 
 # -------------------------------------------------------------------------
 # Here is sample code if you need for
@@ -105,8 +105,10 @@ db.category._singular = T("Category")
 db.category._plural = T("Categories")
 
 db.define_table('rtype',
-    Field('name', 'string', length=50, requires=IS_NOT_EMPTY(), label=T('Type'), comment=T("Type name")),
+    Field('name', 'string', length=50, requires=IS_NOT_EMPTY(), label=T('Name'), comment=T("Name of type")),
     Field('description', 'text', label=T('Description')),
+    Field('oai', 'boolean', default=True, label=T('OAI type')),
+    Field('url', 'string', requires=IS_EMPTY_OR(IS_URL()), label=T('Url to harvester')),
     format='%(name)s')
 
 db.rtype._singular = T("Type")
@@ -191,6 +193,7 @@ mail.settings.login = myconf.get('smtp.login')
 mail.settings.tls = myconf.get('smtp.tls') or False
 mail.settings.ssl = myconf.get('smtp.ssl') or False
 
+print mail.settings
 # all we need is login
 auth.settings.actions_disabled=['retrieve_username'] #,'register','profile', 'request_reset_password']
 

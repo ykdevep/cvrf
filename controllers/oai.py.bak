@@ -1,7 +1,20 @@
 # -*- coding: utf-8 -*-
 # intente algo como
-def index(): 
+
+def index():
     '''
+    Función que permite agregar un typo de recurso para recolectar metadatos
     '''
-    resources = db(db.resource.id > 0).select()
-    return dict(message="hello from oai.py")
+
+    response.title = T("Agregar Revista")+response.title
+
+    form = SQLFORM(db.rtype)
+
+    if form.process().accepted:
+        response.flash = T("Revista agregada")
+    elif form.errors:
+        response.flash = T("El formulario tiene errores")
+    else:
+        response.flash = T("Agregar Revista")
+
+    return dict(form=form)

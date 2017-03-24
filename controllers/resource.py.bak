@@ -255,17 +255,14 @@ def multiple_downloads():
     out = StringIO()
     files = zipfile.ZipFile(out, mode='w')
 
-    for register in db((db.resource.votes_user.contains(auth.user.id, all=True)) & (db.resource.state == db.state.id) & (db.state.name == "Publicar")).select(db.resource.category, db.resource.title, db.resource.mime_type, db.resource.resource, db.resource.downloads, db.resource.modified_on):
+    for register in db((db.resource.votes_user.contains(auth.user.id, all=True)) & (db.resource.state == db.state.id) & (db.state.name == "Publicar")).select(db.resource.category, db.resource.title, db.resource.mime_type, db.resource.resource, db.resource.downloads, db.resource.modified_on, db.resource.id):
         fullpath = app_tools.retrieve_file_properties(register.resource)
         if register.mime_type == "epub+zip":
             files.write(fullpath, register.category.name+"/"+register.title+'.epub')
         else:
             files.write(fullpath, register.category.name+"/"+register.title+'.'+register.mime_type)
 
-        '''register.downloads = register.downloads + 1
-        register.modified_on = register.modified_on
-        register.update_record()'''
-        print register
+        db(db.resource.id == int(register.id)).update(downloads = register.downloads + 1, modified_on = register.modified_on)
 
     files.close()
     response.headers['Content-Type'] = 'application/zip'
